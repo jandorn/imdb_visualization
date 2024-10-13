@@ -34,7 +34,7 @@ const getChapterWidth = (chapterIndex) => {
 const getPageClass = (chapterIndex, pageIndex) => {
   const isActive = isCurrentPage(chapterIndex, pageIndex);
   return [
-    'border rounded flex-1 transition-all duration-300',
+    'border rounded flex-1 transition-all duration-200',
     isActive ? 'border-[#F5C519] bg-[#F5C519] scale-y-[1.7]' : 'border-black opacity-25'
   ];
 };
