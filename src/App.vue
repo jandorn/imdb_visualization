@@ -4,7 +4,7 @@ import Header from './components/Header.vue'
 
 const pages = {
   "Intro": ['Seite 1', 'Seite 2', 'Seite 3', 'Seite 4'],
-  "Placeholder 1": [
+  "Placeholder": [
     'Seite 5',
     'Seite 6',
     'Seite 7',
@@ -26,7 +26,7 @@ const pages = {
     'Seite 23',
     'Seite 24',
   ],
-  "Placeholder 2": ['Seite 25', 'Seite 26', 'Seite 27']
+  "Placeholder2": ['Seite 25', 'Seite 26', 'Seite 27']
 };
 
 const chapters = Object.keys(pages);
