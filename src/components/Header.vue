@@ -48,10 +48,10 @@ const getPageClass = (chapterIndex, pageIndex) => {
     <div class="flex items-center px-12 py-6 space-x-4"> 
       <div v-for="(chapter, chapterIndex) in chapters" :key="chapter" 
            :class="[
-             'flex flex-col space-y-1 text-xs font-semibold transition-all duration-100 ease-in-out',
+             'flex flex-col space-y-1 font-semibold transition-all duration-100 ease-in-out',
              getChapterWidth(chapterIndex)
            ]">
-        <div class="opacity-60">{{ chapterIndex + 1 }} – {{ chapter }}</div>
+        <div class="opacity-60 text-[10px] sm:text-xs text-nowrap">{{ chapterIndex + 1 }} – {{ chapter }}</div>
         <div class="chapters flex space-x-2 w-full">
           <template v-if="isCurrentChapter(chapterIndex)">
             <div v-for="pageIndex in chapterCounts[chapterIndex]" :key="pageIndex"
