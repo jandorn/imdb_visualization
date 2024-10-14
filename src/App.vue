@@ -78,6 +78,19 @@ const changePage = (direction) => {
   });
 };
 
+const handleClick = (event) => {
+  const { clientX, target } = event;
+  const { left, width } = target.getBoundingClientRect();
+  const relativeX = clientX - left;
+  const threshold = width * 0.25;
+
+  if (relativeX < threshold) {
+    changePage(-1);
+  } else {
+    changePage(1);
+  }
+};
+
 onMounted(() => {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') changePage(1);
@@ -102,7 +115,10 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
     :currentChapterIndex="currentChapterIndex" 
     :currentPageIndex="currentPageIndex"
   />
-  <main class="flex flex-col items-center justify-center">
+  <main 
+    class="flex flex-col items-center justify-center min-h-screen"
+    @click="handleClick"
+  >
     <component :is="currentPage" v-if="typeof currentPage === 'object'" />
     <div class="text-4xl font-bold mb-4" v-else>
       {{ currentPage }}
