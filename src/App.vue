@@ -99,18 +99,23 @@ onMounted(() => {
 });
 
 const showClickToContinue = ref(true);
+const isClickToContinueVisible = ref(true);
 
 watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex]) => {
   if (newChapterIndex === 0 && newPageIndex === 0) {
     showClickToContinue.value = true;
+    isClickToContinueVisible.value = true;
   } else {
     showClickToContinue.value = false;
+    setTimeout(() => {
+      isClickToContinueVisible.value = false;
+    }, 300);
   }
 });
 </script>
 
 <template>
-  <div class="min-h-screen mx-2 sm:mx-12" @click="handleClick">
+  <div class="min-h-screen mx-2 sm:mx-12 select-none" @click="handleClick">
     <Header 
       :pages="pages" 
       :currentChapterIndex="currentChapterIndex" 
@@ -130,13 +135,14 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
       >
         {{ currentPageNumber }} / {{ totalPages }}
       </div>
-      <img 
-        v-if="showClickToContinue" 
-        src="./assets/click_to_continue.svg" 
-        alt="Click to continue" 
-        class="fixed bottom-8 right-8 w-64 transition-all duration-300 ease-in-out"
-        :class="showClickToContinue ? 'opacity-50 translate-y-0' : 'opacity-0 translate-y-4'"
+      <div 
+        v-show="isClickToContinueVisible"
+        class="fixed bottom-8 right-8 w-64 transition-all duration-300 ease-in-out px-8 py-4 rounded-lg"
+        :class="{ 'opacity-0 translate-y-4': !showClickToContinue }"
       >
+        <div class="absolute inset-0 bg-[#FBF9F5]/95 rounded-lg border"></div>
+        <img src="./assets/click_to_continue.svg" alt="Click to continue" class="w-full relative z-10">
+      </div>
     </main>
   </div>
 </template>
@@ -148,6 +154,4 @@ body {
   font-family: 'IBM Plex Sans Condensed', sans-serif;
   background-color: #FBF9F5;
 }
-
-/* Hier können Sie zusätzliche Stile hinzufügen, wenn nötig */
 </style>
