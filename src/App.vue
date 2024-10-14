@@ -110,7 +110,7 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
 </script>
 
 <template>
-  <div class="min-h-screen" @click="handleClick">
+  <div class="min-h-screen mx-2 sm:mx-12" @click="handleClick">
     <Header 
       :pages="pages" 
       :currentChapterIndex="currentChapterIndex" 

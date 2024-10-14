@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-12">
+    <div class="">
         <slot />
     </div>
 </template>
