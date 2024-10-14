@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import Header from './components/Header.vue'
-import Page1 from './components/pages/intro/page1.vue'
+import Page1 from './components/pages/intro/Page1.vue'
 
 const pages = {
   "Intro": [Page1, 'Seite 2', 'Seite 3', 'Seite 4'],
