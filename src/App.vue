@@ -110,34 +110,35 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
 </script>
 
 <template>
-  <Header 
-    :pages="pages" 
-    :currentChapterIndex="currentChapterIndex" 
-    :currentPageIndex="currentPageIndex"
-  />
-  <main 
-    class="flex flex-col items-center justify-center min-h-screen"
-    @click="handleClick"
-  >
-    <component :is="currentPage" v-if="typeof currentPage === 'object'" />
-    <div class="text-4xl font-bold mb-4" v-else>
-      {{ currentPage }}
-    </div>
-    <div 
-      v-if="!showClickToContinue"
-      class="text-sm opacity-40 fixed bottom-1 right-3 transition ease-out"
-      :class="{ 'scale-110': isAnimating }"
+  <div class="min-h-screen" @click="handleClick">
+    <Header 
+      :pages="pages" 
+      :currentChapterIndex="currentChapterIndex" 
+      :currentPageIndex="currentPageIndex"
+    />
+    <main 
+      class="flex flex-col items-center justify-center"
     >
-      {{ currentPageNumber }} / {{ totalPages }}
-    </div>
-    <img 
-      v-if="showClickToContinue" 
-      src="./assets/click_to_continue.svg" 
-      alt="Click to continue" 
-      class="fixed bottom-8 right-8 w-64 transition-all duration-300 ease-in-out"
-      :class="showClickToContinue ? 'opacity-50 translate-y-0' : 'opacity-0 translate-y-4'"
-    >
-  </main>
+      <component :is="currentPage" v-if="typeof currentPage === 'object'" />
+      <div class="text-4xl font-bold mb-4" v-else>
+        {{ currentPage }}
+      </div>
+      <div 
+        v-if="!showClickToContinue"
+        class="text-sm opacity-40 fixed bottom-1 right-3 transition ease-out"
+        :class="{ 'scale-110': isAnimating }"
+      >
+        {{ currentPageNumber }} / {{ totalPages }}
+      </div>
+      <img 
+        v-if="showClickToContinue" 
+        src="./assets/click_to_continue.svg" 
+        alt="Click to continue" 
+        class="fixed bottom-8 right-8 w-64 transition-all duration-300 ease-in-out"
+        :class="showClickToContinue ? 'opacity-50 translate-y-0' : 'opacity-0 translate-y-4'"
+      >
+    </main>
+  </div>
 </template>
 
 <style>
