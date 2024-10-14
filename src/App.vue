@@ -2,10 +2,10 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import Header from './components/Header.vue'
 
-import Page1 from './components/pages/intro/Page1.vue'
+import Intro1 from './components/pages/intro/Intro1.vue'
 
 const pages = {
-  "Intro": [Page1, 'Seite 2', 'Seite 3', 'Seite 4'],
+  "Intro": [Intro1, 'Seite 2', 'Seite 3', 'Seite 4'],
   "Placeholder": [
     'Seite 5',
     'Seite 6',
