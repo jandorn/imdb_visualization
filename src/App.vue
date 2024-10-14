@@ -137,7 +137,7 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
       </div>
       <div 
         v-show="isClickToContinueVisible"
-        class="fixed bottom-8 right-8 w-64 transition-all duration-300 ease-in-out px-8 py-4 rounded-lg"
+        class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-64 transition-all duration-300 ease-in-out px-8 py-4 rounded-lg"
         :class="{ 'opacity-0 translate-y-4': !showClickToContinue }"
       >
         <div class="absolute inset-0 bg-[#FBF9F5]/95 rounded-lg border"></div>
