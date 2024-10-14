@@ -109,7 +109,7 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
     showClickToContinue.value = false;
     setTimeout(() => {
       isClickToContinueVisible.value = false;
-    }, 300);
+    }, 200);
   }
 });
 </script>
