@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import Header from './components/Header.vue'
+
 import Page1 from './components/pages/intro/Page1.vue'
 
 const pages = {
@@ -83,6 +84,16 @@ onMounted(() => {
     if (e.key === 'ArrowLeft') changePage(-1);
   });
 });
+
+const showClickToContinue = ref(true);
+
+watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex]) => {
+  if (newChapterIndex === 0 && newPageIndex === 0) {
+    showClickToContinue.value = true;
+  } else {
+    showClickToContinue.value = false;
+  }
+});
 </script>
 
 <template>
@@ -97,11 +108,19 @@ onMounted(() => {
       {{ currentPage }}
     </div>
     <div 
+      v-if="!showClickToContinue"
       class="text-sm opacity-40 fixed bottom-1 right-3 transition ease-out"
       :class="{ 'scale-110': isAnimating }"
     >
       {{ currentPageNumber }} / {{ totalPages }}
     </div>
+    <img 
+      v-if="showClickToContinue" 
+      src="./assets/click_to_continue.svg" 
+      alt="Click to continue" 
+      class="fixed bottom-8 right-8 w-64 transition-all duration-300 ease-in-out"
+      :class="showClickToContinue ? 'opacity-50 translate-y-0' : 'opacity-0 translate-y-4'"
+    >
   </main>
 </template>
 
