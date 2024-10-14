@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import Header from './components/Header.vue'
+import Page1 from './components/pages/intro/page1.vue'
 
 const pages = {
-  "Intro": ['Seite 1', 'Seite 2', 'Seite 3', 'Seite 4'],
+  "Intro": [Page1, 'Seite 2', 'Seite 3', 'Seite 4'],
   "Placeholder": [
     'Seite 5',
     'Seite 6',
@@ -91,11 +92,12 @@ onMounted(() => {
     :currentPageIndex="currentPageIndex"
   />
   <main class="flex flex-col items-center justify-center">
-    <div class="text-4xl font-bold mb-4">
+    <component :is="currentPage" v-if="typeof currentPage === 'object'" />
+    <div class="text-4xl font-bold mb-4" v-else>
       {{ currentPage }}
     </div>
     <div 
-      class="text-6xl font-bold transition ease-out"
+      class="text-sm opacity-40 fixed bottom-1 right-3 transition ease-out"
       :class="{ 'scale-110': isAnimating }"
     >
       {{ currentPageNumber }} / {{ totalPages }}
