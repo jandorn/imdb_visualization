@@ -57,7 +57,7 @@ const getPageClass = (chapterIndex, pageIndex) => {
             – {{ chapter }}
           </template>
         </div>
-        <div class="chapters flex space-x-2 w-full">
+        <div class="chapters flex space-x-0.5 sm:space-x-1 w-full">
           <template v-if="isCurrentChapter(chapterIndex)">
             <div v-for="pageIndex in chapterCounts[chapterIndex]" :key="pageIndex"
                  :class="getPageClass(chapterIndex, pageIndex - 1)">
