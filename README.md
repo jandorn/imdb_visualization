@@ -1,16 +1,12 @@
 # imdb_visualization
 
-This template should help get you started developing with Vue 3 in Vite.
+Codebase for a visualization of the IMDB dataset.
 
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+You can find the webapp [here](https://imdbviz.netlify.app/).
 
 ## Project Setup
+
+To setup the project locally:
 
 ```sh
 npm install
