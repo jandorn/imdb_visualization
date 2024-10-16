@@ -41,11 +41,11 @@ const getPageClass = (chapterIndex, pageIndex) => {
 </script>
 
 <template>
-  <header class="my-4">
+  <header class="mt-4">
     <div class="flex justify-center">
       <img src="@/assets/imdb_visualized.svg" alt="IMDB Logo" class="h-10"/>
     </div>
-    <div class="flex items-center my-6 space-x-4"> 
+    <div class="flex items-center my-4 space-x-4"> 
       <div v-for="(chapter, chapterIndex) in chapters" :key="chapter" 
            :class="[
              'flex flex-col space-y-1 font-semibold transition-all duration-100 ease-in-out',
