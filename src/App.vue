@@ -125,9 +125,10 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
       class="flex flex-col items-center justify-center"
     >
       <component :is="currentPage" v-if="typeof currentPage === 'object'" />
-      <div class="text-4xl font-bold mb-4" v-else>
+      <div class="text-sm font-bold mt-32" v-else>
         {{ currentPage }}
       </div>
+      <!-- Page number on bottom right (every page except intro) -->
       <div 
         v-if="!showClickToContinue"
         class="text-sm opacity-40 fixed bottom-1 right-3 transition ease-out"
@@ -135,6 +136,7 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
       >
         {{ currentPageNumber }} / {{ totalPages }}
       </div>
+      <!-- Click to continue banner on first -->
       <div 
         v-show="isClickToContinueVisible"
         class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-64 transition-all duration-300 ease-in-out px-8 py-4 rounded-lg"
