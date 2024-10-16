@@ -5,30 +5,30 @@ import Header from './components/Header.vue'
 import Intro1 from './components/pages/intro/Intro1.vue'
 
 const pages = {
-  "Intro": [Intro1, 'Seite 2', 'Seite 3', 'Seite 4'],
+  "Intro": [Intro1, 'Page 2', 'Page 3', 'Page 4'],
   "Placeholder": [
-    'Seite 5',
-    'Seite 6',
-    'Seite 7',
-    'Seite 8',
-    'Seite 9',
-    'Seite 10',
-    'Seite 11',
-    'Seite 12',
-    'Seite 13',
-    'Seite 14',
-    'Seite 15',
-    'Seite 16',
-    'Seite 17',
-    'Seite 18',
-    'Seite 19',
-    'Seite 20',
-    'Seite 21',
-    'Seite 22',
-    'Seite 23',
-    'Seite 24',
+    'Page 5',
+    'Page 6',
+    'Page 7',
+    'Page 8',
+    'Page 9',
+    'Page 10',
+    'Page 11',
+    'Page 12',
+    'Page 13',
+    'Page 14',
+    'Page 15',
+    'Page 16',
+    'Page 17',
+    'Page 18',
+    'Page 19',
+    'Page 20',
+    'Page 21',
+    'Page 22',
+    'Page 23',
+    'Page 24',
   ],
-  "Placeholder2": ['Seite 25', 'Seite 26', 'Seite 27']
+  "Placeholder2": ['Page 25', 'Page 26', 'Page 27']
 };
 
 const chapters = Object.keys(pages);
