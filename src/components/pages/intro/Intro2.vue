@@ -108,12 +108,12 @@ function renderForceSimulation() {
     .attr('height', chartHeight.value);
 
   const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(d => 0.1 / d.weight))
-    .force("charge", d3.forceManyBody().strength(0.3))
+    .force("link", d3.forceLink(links).id(d => d.id).distance(d => 0.1 / d.weight).strength(0.1))
+    .force("charge", d3.forceManyBody().strength(0.1))
     .force("center", d3.forceCenter(chartWidth.value / 2, chartHeight.value / 2))
     .force('collision', d3.forceCollide().radius(d => Math.sqrt(d.count) ))  // node size based on genre count
-    .alpha(0.2)  // Lower starting alpha to reduce initial jiggle
-    .alphaDecay(0.05);  // Faster decay to stabilize the layout quicker
+    .alpha(0.2)  
+    .alphaDecay(0.05); 
 
   const link = svg.append("g")
     .selectAll("line")
