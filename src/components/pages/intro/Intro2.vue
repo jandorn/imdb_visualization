@@ -109,9 +109,11 @@ function renderForceSimulation() {
 
   const simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.id).distance(d => 0.1 / d.weight))
-    .force("charge", d3.forceManyBody().strength(-5))
+    .force("charge", d3.forceManyBody().strength(0.3))
     .force("center", d3.forceCenter(chartWidth.value / 2, chartHeight.value / 2))
-    .force('collision', d3.forceCollide().radius(d => Math.sqrt(d.count) ));  // node size based on genre count
+    .force('collision', d3.forceCollide().radius(d => Math.sqrt(d.count) ))  // node size based on genre count
+    .alpha(0.2)  // Lower starting alpha to reduce initial jiggle
+    .alphaDecay(0.05);  // Faster decay to stabilize the layout quicker
 
   const link = svg.append("g")
     .selectAll("line")
@@ -168,13 +170,13 @@ function renderForceSimulation() {
     return d.y;
   }).strength(0.1));  
 
-  simulation.alpha(0.1).restart();  
+  simulation.alpha(0.2).restart();  
 });
 
   svg.on("mouseleave", () => {
     simulation.force("mouse", null);
     simulation.force("mouse-y", null);
-    simulation.alpha(0.1).restart();
+    simulation.alpha(0.2).restart();
   });
 }
 </script>
