@@ -1,11 +1,42 @@
 <script setup>
 import { onMounted, ref, onUnmounted } from 'vue';
 import PageLayout from '../../layout/PageLayout.vue';
+import { drag as d3Drag } from 'd3-drag';
+import { select as d3Select } from 'd3-selection';
 import * as d3 from 'd3';
 
 const chartRef = ref(null);
 const chartWidth = ref(0);
 const chartHeight = ref(600);
+
+const scaleOpacity = (value) => {
+  if (minWeight === maxWeight) return 1;
+  return (value - minWeight) / (maxWeight - minWeight);
+};
+
+const drag = simulation => {
+  function dragstarted(event, d) {
+    if (!event.active) simulation.alphaTarget(0.3).restart();
+    d.fx = d.x;
+    d.fy = d.y;
+  }
+  
+  function dragged(event, d) {
+    d.fx = event.x;
+    d.fy = event.y;
+  }
+  
+  function dragended(event, d) {
+    if (!event.active) simulation.alphaTarget(0);
+    d.fx = null;
+    d.fy = null;
+  }
+  
+  return d3Drag()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended);
+}
 
 let nodes = [];
 let links = [];
@@ -14,26 +45,11 @@ let data = [];
 let resizeObserver;
 
 onMounted(() => {
-  // create adjacency list
-  computeAdjacencyList();
-  updateChartSize();
-  
-  resizeObserver = new ResizeObserver(() => {
-    updateChartSize();
-    renderForceSimulation();
-  });
-  
-  if (chartRef.value) {
-    resizeObserver.observe(chartRef.value);
-  }
-});
-
-onMounted(() => {
   d3.tsv('src/assets/data/AllMovies.csv').then(loadedData => {
     console.log('Loaded Data:', loadedData);
     data = loadedData.map(d => ({
-      title: d.primaryTitle,  // Access 'primaryTitle' column for movie title
-      genres: d.genres        // Access 'genres' column
+      title: d.primaryTitle,  
+      genres: d.genres       
     }));
     
     computeAdjacencyList();
@@ -50,20 +66,19 @@ onMounted(() => {
   });
 });
 
-// Function to compute the adjacency list (nodes and links) dynamically
+
 function computeAdjacencyList() {
   const genreOccurrences = {};
   const genrePairs = {};
-  // Step 1: Split the genres and count occurrences of each genre
+  //step 1: Split the genres and count occurrences of each genre
   data.forEach(movie => {
-    // Check if 'genres' exists and is a non-empty string
     if (movie.genres && movie.genres.trim() !== "") {
-      const genres = movie.genres.split(',');  // Assuming genres are comma-separated in the CSV/TSV
+      const genres = movie.genres.split(',');  
       genres.forEach(genre => {
         genreOccurrences[genre] = (genreOccurrences[genre] || 0) + 1;
       });
 
-      // Step 2: Create genre pairs and count co-occurrences for the Jaccard index
+      // step 2: Create genre pairs and count co-occurrences
       for (let i = 0; i < genres.length; i++) {
         for (let j = i + 1; j < genres.length; j++) {
           const pairKey = [genres[i], genres[j]].sort().join('-');
@@ -74,13 +89,13 @@ function computeAdjacencyList() {
     }
   });
 
-  // Step 3: Prepare the nodes (unique genres)
+  // step 3: prepare the nodes
   nodes = Object.keys(genreOccurrences).map(genre => ({
     id: genre,
     count: genreOccurrences[genre]
   }));
 
-  // Step 4: Prepare the links (edges) with Jaccard index as weight
+  // Step 4 prepare the edges with Jaccard index as weight
   links = Object.values(genrePairs).map(pair => {
     const [genre1, genre2] = pair.genres;
     const intersectionCount = pair.count;
@@ -90,7 +105,7 @@ function computeAdjacencyList() {
     return { source: genre1, target: genre2, weight: jaccardIndex };
   });
 
-  //console.log(nodes, links);  // Debug: Check nodes and links computation
+  //console.log(nodes, links); 
 }
 
 function updateChartSize() {
@@ -108,30 +123,50 @@ function renderForceSimulation() {
     .attr('height', chartHeight.value);
 
   const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(d => 0.1 / d.weight).strength(0.1))
-    .force("charge", d3.forceManyBody().strength(0.1))
-    .force("center", d3.forceCenter(chartWidth.value / 2, chartHeight.value / 2))
-    .force('collision', d3.forceCollide().radius(d => Math.sqrt(d.count) ))  // node size based on genre count
+    .force("link", d3.forceLink(links).id(d => d.id).distance(300)) 
+    .force("charge", d3.forceManyBody().strength(-200)) 
+    .force("center", d3.forceCenter(0, 0))
+    .force("collision", d3.forceCollide().radius(d => Math.sqrt(d.count) * 0.3 + 5)) 
     .alpha(0.2)  
     .alphaDecay(0.05); 
 
-  const link = svg.append("g")
+  const scaleFactor = 1; 
+  const graphGroup = svg.append('g')
+    .attr('transform', `translate(${chartWidth.value / 2}, ${chartHeight.value / 2}) scale(${scaleFactor})`);
+
+  const weights = links.map(d => d.weight);
+  const minWeight = Math.min(...weights);
+  const maxWeight = Math.max(...weights);
+
+  const scaleOpacity = (value) => {
+    if (minWeight === maxWeight) return 1; // Avoid division by zero
+    return (value - minWeight) / (maxWeight - minWeight);
+  };
+
+  const link = graphGroup.append("g")
     .selectAll("line")
     .data(links)
     .join("line")
     .attr("stroke", "#999")
-    .attr("stroke-opacity", 0.6)
-    .attr('stroke-width', d => d.weight * 100);  // edge thickness based on Jaccard index
+    .attr("stroke-opacity", d => scaleOpacity(d.weight))
+    .attr('stroke-width', d => d.weight * 100); 
 
-  const node = svg.append("g")
-    .selectAll("circle")
+    const node = graphGroup.append("g")
+    .selectAll("g")
     .data(nodes)
-    .join("circle")
-    .attr('r', d => Math.sqrt(d.count) * 0.3)  //node size scaled by genre count
-    .attr("fill", d => d.id === 1 ? "#F5C519" : "#012F4D");
+    .join("g")
+    .call(drag(simulation));
 
-  node.append("title")
-    .text(d => d.name);
+  node.append("circle")
+    .attr('r', d => Math.sqrt(d.count) * 0.3)
+    .attr("fill", "#F5C519");
+
+  node.append("text")
+    .text(d => d.id)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "central")
+    .attr("font-size", "10px")
+    .attr("fill", "black");
 
   simulation.on("tick", () => {
     link
@@ -141,10 +176,10 @@ function renderForceSimulation() {
       .attr("y2", d => d.target.y);
 
     node
-      .attr("cx", d => d.x)
-      .attr("cy", d => d.y);
+      .attr("transform", d => `translate(${d.x},${d.y})`);
   });
 
+  /*
   svg.on("mousemove", (event) => {
   const [x, y] = d3.pointer(event);
   
@@ -171,6 +206,7 @@ function renderForceSimulation() {
   }).strength(0.1));  
 
   simulation.alpha(0.2).restart();  
+  
 });
 
   svg.on("mouseleave", () => {
@@ -178,7 +214,81 @@ function renderForceSimulation() {
     simulation.force("mouse-y", null);
     simulation.alpha(0.2).restart();
   });
+  */
 }
+
+function renderGraph() {
+  console.log("Nodes data:", nodes);
+
+  const svg = d3.select(chartRef.value)
+    .append('svg')
+    .attr('width', chartWidth.value)
+    .attr('height', chartHeight.value)
+    .attr('viewBox', [0, 0, chartWidth.value, chartHeight.value])
+    .style('border', '1px solid #ccc');
+
+  const graphGroup = svg.append('g')
+    .attr('transform', `translate(${chartWidth.value / 2}, ${chartHeight.value / 2}) scale(1)`);
+
+  const link = graphGroup.append("g")
+    .selectAll("line")
+    .data(links)
+    .join("line")
+    .attr("stroke", "#999")
+    .attr("stroke-opacity", d => scaleOpacity(d.weight))
+    .attr('stroke-width', d => scaleOpacity(d.weight) * 5);
+
+  const node = graphGroup.append("g")
+    .selectAll("g")
+    .data(nodes)
+    .join("g")
+    .call(drag(simulation));
+
+  console.log("Number of nodes:", node.size());
+
+  node.append("circle")
+    .attr('r', d => Math.sqrt(d.count) * 0.3)
+    .attr("fill", "#F5C519");
+
+  node.append("text")
+    .text(d => {
+      console.log("Node data:", d);
+      return d.genre || d.id || "Unknown";
+    })
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "central")
+    .attr("font-size", "12px")
+    .attr("fill", "black")
+    .attr("pointer-events", "none");
+
+  function ticked() {
+    link
+      .attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
+
+    node.attr("transform", d => `translate(${d.x},${d.y})`);
+    
+    // Explicitly update text position
+    node.select("text")
+      .attr("x", 0)
+      .attr("y", 0);
+  }
+
+  const simulation = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+    .force("charge", d3.forceManyBody().strength(-200))
+    .force("center", d3.forceCenter(0, 0))
+    .force("collision", d3.forceCollide().radius(d => Math.sqrt(d.count) * 0.3 + 5));
+
+  simulation.on("tick", ticked);
+
+  // Force an immediate update
+  simulation.tick(10);
+  ticked();
+}
+
 </script>
 
 <template>
@@ -197,3 +307,11 @@ function renderForceSimulation() {
 
     </PageLayout>
 </template>
+
+<style>
+#graph-container {
+  width: 100%;
+  height: 100vh; /* Adjust as needed */
+}
+</style>
+
