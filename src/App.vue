@@ -113,6 +113,16 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
     }, 200);
   }
 });
+
+import { useMovieStore } from './stores/movieStore'
+
+const movieStore = useMovieStore()
+
+onMounted(async () => {
+  if (movieStore.movies.length === 0) {
+    await movieStore.fetchMovies()
+  }
+})
 </script>
 
 <template>
