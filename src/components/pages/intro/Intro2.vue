@@ -4,7 +4,7 @@ import PageLayout from '../../layout/PageLayout.vue';
 import { drag as d3Drag } from 'd3-drag';
 import { select as d3Select } from 'd3-selection';
 import * as d3 from 'd3';
-import { useMovieStore } from '../../../stores/movieStore';
+import { useMovieStore } from '../../../stores/movieStore.js';
 
 const movieStore = useMovieStore();
 
