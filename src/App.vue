@@ -118,45 +118,66 @@ import { useMovieStore } from './stores/movieStore'
 
 const movieStore = useMovieStore()
 
+const isLoading = ref(true)
+const showApp = ref(false)
+
 onMounted(async () => {
   if (movieStore.movies.length === 0) {
     await movieStore.fetchMovies()
   }
+  isLoading.value = false
+  setTimeout(() => {
+    showApp.value = true
+  }, 400)
 })
 </script>
 
 <template>
-  <div class="min-h-screen mx-2 sm:mx-12 select-none" @click="handleClick">
-    <Header 
-      :pages="pages" 
-      :currentChapterIndex="currentChapterIndex" 
-      :currentPageIndex="currentPageIndex"
-    />
-    <main 
-      class="flex flex-col items-center justify-center"
+  <div class="relative overflow-hidden">
+    <!-- loading screen -->
+    <div 
+      class="fixed inset-0 bg-[#EABB0F] flex items-center justify-center z-50 transition-transform duration-1000"
+      :class="{ 'translate-y-full': !isLoading && showApp }"
     >
-      <component :is="currentPage" v-if="typeof currentPage === 'object'" />
-      <div class="text-sm font-bold mt-32" v-else>
-        {{ currentPage }}
+      <div class="font-semibold text-white flex flex-col justify-center items-center">
+        <div>Loading</div>
+        <div>{{ movieStore.loadingProgress }}%</div>
       </div>
-      <!-- Page number on bottom right (every page except intro) -->
-      <div 
-        v-if="!showClickToContinue"
-        class="text-sm opacity-40 fixed bottom-1 right-3 transition ease-out"
-        :class="{ 'scale-110': isAnimating }"
+    </div>
+
+    <!-- actual app -->
+    <div class="min-h-screen mx-2 sm:mx-12 select-none" @click="handleClick">
+      <Header 
+        :pages="pages" 
+        :currentChapterIndex="currentChapterIndex" 
+        :currentPageIndex="currentPageIndex"
+      />
+      <main 
+        class="flex flex-col items-center justify-center"
       >
-        {{ currentPageNumber }} / {{ totalPages }}
-      </div>
-      <!-- Click to continue banner on first -->
-      <div 
-        v-show="isClickToContinueVisible"
-        class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-64 transition-all duration-300 ease-in-out px-8 py-4 rounded-lg"
-        :class="{ 'opacity-0 translate-y-4': !showClickToContinue }"
-      >
-        <div class="absolute inset-0 bg-[#FBF9F5]/95 rounded-lg border"></div>
-        <img src="./assets/click_to_continue.svg" alt="Click to continue" class="w-full relative z-10">
-      </div>
-    </main>
+        <component :is="currentPage" v-if="typeof currentPage === 'object'" />
+        <div class="text-sm font-bold mt-32" v-else>
+          {{ currentPage }}
+        </div>
+        <!-- page number on bottom right (every page except first page) -->
+        <div 
+          v-if="!showClickToContinue"
+          class="text-sm opacity-40 fixed bottom-1 right-3 transition ease-out"
+          :class="{ 'scale-110': isAnimating }"
+        >
+          {{ currentPageNumber }} / {{ totalPages }}
+        </div>
+        <!-- click to continue banner on first page -->
+        <div 
+          v-show="isClickToContinueVisible"
+          class="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-64 transition-all duration-300 ease-in-out px-8 py-4 rounded-lg"
+          :class="{ 'opacity-0 translate-y-4': !showClickToContinue }"
+        >
+          <div class="absolute inset-0 bg-[#FBF9F5]/95 rounded-lg border"></div>
+          <img src="./assets/click_to_continue.svg" alt="Click to continue" class="w-full relative z-10">
+        </div>
+      </main>
+    </div>
   </div>
 </template>
 
