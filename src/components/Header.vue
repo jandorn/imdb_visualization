@@ -45,7 +45,7 @@ const getPageClass = (chapterIndex, pageIndex) => {
     <div class="flex justify-center">
       <img src="@/assets/imdb_visualized.svg" alt="IMDB Logo" class="h-10"/>
     </div>
-    <div class="flex items-center my-4 space-x-4"> 
+    <div class="flex items-center my-4 space-x-2 sm:space-x-3"> 
       <div v-for="(chapter, chapterIndex) in chapters" :key="chapter" 
            :class="[
              'flex flex-col space-y-1 font-semibold transition-all duration-100 ease-in-out',
