@@ -1,9 +1,12 @@
 <script setup>
-import { onMounted, ref, onUnmounted } from 'vue';
+import { onMounted, ref, onUnmounted, computed, watch } from 'vue';
 import PageLayout from '../../layout/PageLayout.vue';
 import { drag as d3Drag } from 'd3-drag';
 import { select as d3Select } from 'd3-selection';
 import * as d3 from 'd3';
+import { useMovieStore } from '../../../stores/movieStore';
+
+const movieStore = useMovieStore();
 
 const chartRef = ref(null);
 const chartWidth = ref(0);
@@ -38,40 +41,16 @@ const drag = simulation => {
     .on("end", dragended);
 }
 
-let nodes = [];
-let links = [];
-let data = [];
+let nodes = ref([]);
+let links = ref([]);
 
 let resizeObserver;
 
-onMounted(() => {
-  d3.tsv('src/assets/data/AllMovies.csv').then(loadedData => {
-    console.log('Loaded Data:', loadedData);
-    data = loadedData.map(d => ({
-      title: d.primaryTitle,  
-      genres: d.genres       
-    }));
-    
-    computeAdjacencyList();
-    updateChartSize();
-    
-    resizeObserver = new ResizeObserver(() => {
-      updateChartSize();
-      renderForceSimulation();
-    });
-  
-    if (chartRef.value) {
-      resizeObserver.observe(chartRef.value);
-    }
-  });
-});
-
-
-function computeAdjacencyList() {
+const computeAdjacencyList = () => {
   const genreOccurrences = {};
   const genrePairs = {};
-  //step 1: Split the genres and count occurrences of each genre
-  data.forEach(movie => {
+  
+  movieStore.movies.forEach(movie => {
     if (movie.genres && movie.genres.trim() !== "") {
       const genres = movie.genres.split(',');  
       genres.forEach(genre => {
@@ -90,13 +69,13 @@ function computeAdjacencyList() {
   });
 
   // step 3: prepare the nodes
-  nodes = Object.keys(genreOccurrences).map(genre => ({
+  nodes.value = Object.keys(genreOccurrences).map(genre => ({
     id: genre,
     count: genreOccurrences[genre]
   }));
 
   // Step 4 prepare the edges with Jaccard index as weight
-  links = Object.values(genrePairs).map(pair => {
+  links.value = Object.values(genrePairs).map(pair => {
     const [genre1, genre2] = pair.genres;
     const intersectionCount = pair.count;
     const unionCount = genreOccurrences[genre1] + genreOccurrences[genre2] - intersectionCount;
@@ -104,9 +83,32 @@ function computeAdjacencyList() {
 
     return { source: genre1, target: genre2, weight: jaccardIndex };
   });
+};
 
-  //console.log(nodes, links); 
-}
+watch(() => movieStore.movies, (newMovies) => {
+  if (newMovies.length > 0) {
+    computeAdjacencyList();
+    updateChartSize();
+    renderForceSimulation();
+  }
+}, { immediate: true });
+
+onMounted(() => {
+  updateChartSize();
+  
+  resizeObserver = new ResizeObserver(() => {
+    updateChartSize();
+    renderForceSimulation();
+  });
+
+  if (chartRef.value) {
+    resizeObserver.observe(chartRef.value);
+  }
+
+  if (movieStore.movies.length === 0) {
+    movieStore.fetchMovies();
+  }
+});
 
 function updateChartSize() {
   if (chartRef.value) {
@@ -122,8 +124,8 @@ function renderForceSimulation() {
     .attr('width', chartWidth.value)
     .attr('height', chartHeight.value);
 
-  const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(300)) 
+  const simulation = d3.forceSimulation(nodes.value)
+    .force("link", d3.forceLink(links.value).id(d => d.id).distance(300)) 
     .force("charge", d3.forceManyBody().strength(-200)) 
     .force("center", d3.forceCenter(0, 0))
     .force("collision", d3.forceCollide().radius(d => Math.sqrt(d.count) * 0.3 + 5)) 
@@ -134,7 +136,7 @@ function renderForceSimulation() {
   const graphGroup = svg.append('g')
     .attr('transform', `translate(${chartWidth.value / 2}, ${chartHeight.value / 2}) scale(${scaleFactor})`);
 
-  const weights = links.map(d => d.weight);
+  const weights = links.value.map(d => d.weight);
   const minWeight = Math.min(...weights);
   const maxWeight = Math.max(...weights);
 
@@ -145,7 +147,7 @@ function renderForceSimulation() {
 
   const link = graphGroup.append("g")
     .selectAll("line")
-    .data(links)
+    .data(links.value)
     .join("line")
     .attr("stroke", "#999")
     .attr("stroke-opacity", d => scaleOpacity(d.weight))
@@ -153,7 +155,7 @@ function renderForceSimulation() {
 
     const node = graphGroup.append("g")
     .selectAll("g")
-    .data(nodes)
+    .data(nodes.value)
     .join("g")
     .call(drag(simulation));
 
@@ -218,7 +220,7 @@ function renderForceSimulation() {
 }
 
 function renderGraph() {
-  console.log("Nodes data:", nodes);
+  console.log("Nodes data:", nodes.value);
 
   const svg = d3.select(chartRef.value)
     .append('svg')
@@ -232,7 +234,7 @@ function renderGraph() {
 
   const link = graphGroup.append("g")
     .selectAll("line")
-    .data(links)
+    .data(links.value)
     .join("line")
     .attr("stroke", "#999")
     .attr("stroke-opacity", d => scaleOpacity(d.weight))
@@ -240,7 +242,7 @@ function renderGraph() {
 
   const node = graphGroup.append("g")
     .selectAll("g")
-    .data(nodes)
+    .data(nodes.value)
     .join("g")
     .call(drag(simulation));
 
@@ -276,8 +278,8 @@ function renderGraph() {
       .attr("y", 0);
   }
 
-  const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+  const simulation = d3.forceSimulation(nodes.value)
+    .force("link", d3.forceLink(links.value).id(d => d.id).distance(100))
     .force("charge", d3.forceManyBody().strength(-200))
     .force("center", d3.forceCenter(0, 0))
     .force("collision", d3.forceCollide().radius(d => Math.sqrt(d.count) * 0.3 + 5));
@@ -289,23 +291,30 @@ function renderGraph() {
   ticked();
 }
 
+onUnmounted(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+  }
+});
 </script>
 
 <template>
-    <PageLayout>
-        <div class="flex justify-center w-full">
-            <div ref="chartRef" class="w-full h-[600px]"></div>
-        </div>
-        
-        In commodo occaecat est laborum ullamco cillum proident duis proident et commodo.
-        Nulla incididunt consequat sunt eu duis officia irure incididunt.
-        Est sit esse eiusmod tempor ea nulla ut duis voluptate sit.
-        Adipisicing qui est in consectetur eu eu non anim aute sunt tempor dolore magna.
-        Dolore dolor laboris consectetur sint veniam anim quis. 
-        Sunt amet ullamco dolor Lorem labore veniam qui qui cupidatat eiusmod sint in Lorem esse.
-        Veniam duis irure exercitation qui. <br><br>
-
-    </PageLayout>
+  <PageLayout>
+    <div v-if="movieStore.isLoading">Daten werden geladen...</div>
+    <div v-else-if="movieStore.error">Fehler beim Laden der Daten: {{ movieStore.error }}</div>
+    <div v-else>
+      <div class="flex justify-center w-full">
+        <div ref="chartRef" class="w-full h-[600px]"></div>
+      </div>
+      In commodo occaecat est laborum ullamco cillum proident duis proident et commodo.
+      Nulla incididunt consequat sunt eu duis officia irure incididunt.
+      Est sit esse eiusmod tempor ea nulla ut duis voluptate sit.
+      Adipisicing qui est in consectetur eu eu non anim aute sunt tempor dolore magna.
+      Dolore dolor laboris consectetur sint veniam anim quis. 
+      Sunt amet ullamco dolor Lorem labore veniam qui qui cupidatat eiusmod sint in Lorem esse.
+      Veniam duis irure exercitation qui. <br><br>
+    </div>
+  </PageLayout>
 </template>
 
 <style>
@@ -314,4 +323,3 @@ function renderGraph() {
   height: 100vh; /* Adjust as needed */
 }
 </style>
-
