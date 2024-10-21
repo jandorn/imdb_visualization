@@ -4,9 +4,10 @@ import Header from './components/Header.vue'
 
 import Intro1 from './components/pages/intro/Intro1.vue'
 import Intro2 from './components/pages/intro/Intro2.vue'
+import Intro3 from './components/pages/intro/Intro3.vue'
 
 const pages = {
-  "Intro": [Intro1, Intro2, 'Page 3', 'Page 4'],
+  "Intro": [Intro1, Intro2, Intro3, 'Page 4'],
   "Placeholder": [
     'Page 5',
     'Page 6',
