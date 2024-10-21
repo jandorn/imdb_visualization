@@ -121,6 +121,7 @@ const movieStore = useMovieStore()
 
 const isLoading = ref(true)
 const showApp = ref(false)
+const isAnimationDone = ref(false)
 
 onMounted(async () => {
   if (movieStore.movies.length === 0) {
@@ -129,6 +130,9 @@ onMounted(async () => {
   isLoading.value = false
   setTimeout(() => {
     showApp.value = true
+    setTimeout(() => {
+      isAnimationDone.value = true
+    }, 1000)
   }, 400)
 })
 </script>
@@ -138,7 +142,7 @@ onMounted(async () => {
     <!-- loading screen -->
     <div 
       class="fixed inset-0 bg-[#EABB0F] flex items-center justify-center z-50 transition-transform duration-1000"
-      :class="{ 'translate-y-full': !isLoading && showApp }"
+      :class="{ 'translate-y-full': !isLoading && showApp, 'hidden': !isLoading && showApp && isAnimationDone }"
     >
       <div class="font-semibold text-white flex flex-col justify-center items-center">
         <div>Loading</div>
