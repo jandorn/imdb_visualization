@@ -1,16 +1,23 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import Header from './components/Header.vue'
+import { useNavigationStore } from './stores/navigationStore'
+import { useMovieStore } from './stores/movieStore'
 
 import Intro1 from './components/pages/intro/Intro1.vue'
 import Intro2 from './components/pages/intro/Intro2.vue'
 import Intro3 from './components/pages/intro/Intro3.vue'
+import Genre1 from './components/pages/placeholder/Genre1.vue'
+import Genre2 from './components/pages/placeholder/Genre2.vue'
+
+const navigationStore = useNavigationStore()
+const movieStore = useMovieStore()
 
 const pages = {
   "Intro": [Intro1, Intro2, Intro3, 'Page 4'],
-  "Placeholder": [
-    'Page 5',
-    'Page 6',
+  "Genre": [
+    Genre1,
+    Genre2,
     'Page 7',
     'Page 8',
     'Page 9',
@@ -40,6 +47,16 @@ const isAnimating = ref(false);
 
 const currentChapter = computed(() => chapters[currentChapterIndex.value]);
 const currentPage = computed(() => pages[currentChapter.value][currentPageIndex.value]);
+
+const updateNavigationStore = () => {
+  navigationStore.setCurrentChapterIndex(currentChapterIndex.value);
+  navigationStore.setCurrentPageIndex(currentPageIndex.value);
+  navigationStore.setCurrentPage(
+    typeof currentPage.value === 'object' 
+      ? currentPage.value.__name 
+      : currentPage.value
+  );
+};
 
 const totalPages = computed(() => Object.values(pages).reduce((sum, chapter) => sum + chapter.length, 0));
 
@@ -73,6 +90,8 @@ const changePage = (direction) => {
   
   currentChapterIndex.value = newChapterIndex;
   currentPageIndex.value = newPageIndex;
+  
+  updateNavigationStore();
   
   isAnimating.value = true;
   requestAnimationFrame(() => {
@@ -114,10 +133,6 @@ watch([currentChapterIndex, currentPageIndex], ([newChapterIndex, newPageIndex])
     }, 200);
   }
 });
-
-import { useMovieStore } from './stores/movieStore'
-
-const movieStore = useMovieStore()
 
 const isLoading = ref(true)
 const showApp = ref(false)
