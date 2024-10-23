@@ -4,7 +4,7 @@
 
 Codebase for a visualization of the IMDB dataset.
 
-You can find the webapp [here](https://imdbviz.netlify.app/).
+You can find the webapp [here](https://imdbviz.com/).
 
 ## Project Setup
 
