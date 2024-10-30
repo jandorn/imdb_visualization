@@ -9,16 +9,20 @@ import Intro2 from './components/pages/intro/Intro2.vue'
 import Intro3 from './components/pages/intro/Intro3.vue'
 import Genre1 from './components/pages/placeholder/Genre1.vue'
 import Genre2 from './components/pages/placeholder/Genre2.vue'
+import Time1 from './components/pages/placeholder/Time1.vue';
+import Time2 from './components/pages/placeholder/Time2.vue';
+import Time3 from './components/pages/placeholder/Time3.vue';
+import Time4 from './components/pages/placeholder/Time4.vue';
 
 const navigationStore = useNavigationStore()
 const movieStore = useMovieStore()
 
 const pages = {
-  "Intro": [Intro1, Intro2, Intro3, 'Page 4'],
+  "Intro": [Intro1, Intro2, 'Page 3', 'Page 4'],
   "Genre": [
     Genre1,
     Genre2,
-    'Page 7',
+    /*'Page 7',
     'Page 8',
     'Page 9',
     'Page 10',
@@ -35,9 +39,14 @@ const pages = {
     'Page 21',
     'Page 22',
     'Page 23',
-    'Page 24',
+    'Page 24',*/
   ],
-  "Placeholder2": ['Page 25', 'Page 26', 'Page 27']
+  "Time": [
+    Time1,
+    Time2,
+    Time3,
+    Time4
+  ]
 };
 
 const chapters = Object.keys(pages);
