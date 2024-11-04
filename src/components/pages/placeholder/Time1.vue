@@ -10,7 +10,7 @@ const movieStore = useMovieStore();
   <PageLayout>
     <div class="w-full justify-start text-lg">
       <div>
-        Let's look at how movie ratings have changed <b>over time</b>. <br>
+        Let's look at how average movie ratings have changed <b>over time</b>. <br>
         <!--The blue area shows the confidence interval of the ratings.-->
       </div>
     </div>

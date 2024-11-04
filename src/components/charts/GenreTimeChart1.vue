@@ -15,11 +15,15 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  showLimitedData: {
+  animateAnnotation: {
     type: Boolean,
     default: false
   },
-  animateAnnotation: {
+  animateAnnotation2: {
+    type: Boolean,
+    default: false
+  },
+  scaleXAxis: {
     type: Boolean,
     default: false
   }
@@ -61,7 +65,7 @@ const processData = () => {
   processedData.value = Object.entries(yearData).map(([year, data]) => ({
     year: parseInt(year),
     average: data.sum / data.count,
-    confidence: 1.96 * d3.deviation(data.ratings) / Math.sqrt(data.count)
+    confidence: 1.96 * (d3.deviation(data.ratings) / Math.sqrt(data.count))
   })).sort((a, b) => a.year - b.year);
 
 };
@@ -142,6 +146,27 @@ function renderChart() {
   yAxis.call(g => g.selectAll('.tick line').attr('stroke-width', 2))
   yAxis.call(g => g.selectAll('text').attr('font-weight', '600'));
 
+  // Draw confidence interval FIRST if needed
+  const area = d3.area()
+    .x(d => x(d.year))
+    .y0(d => y(d.average - (d.confidence || 0)))
+    .y1(d => y(d.average + (d.confidence || 0)));
+
+  const confidenceArea = svg.append("path")
+    .datum(processedData.value)
+    //.attr("class", "line-path")
+    .attr("fill", "#cce5df")
+    .attr("stroke", "none")
+    .attr("opacity", 0)
+    .attr("d", area);
+
+  const line = d3.line()
+      .x(d => x(d.year))
+      .y(d => y(d.average));
+
+  const chartGroup = svg.append("g")
+      .attr("clip-path", "url(#clip)");
+
   if (!props.showConfidence) {
     // First page: Animate the line from left to right
     svg.append("defs")
@@ -154,35 +179,17 @@ function renderChart() {
       .duration(1000)
       .attr("width", width);
 
-    const chartGroup = svg.append("g")
-      .attr("clip-path", "url(#clip)");
-
-    // Draw the line with animation
-    const line = d3.line()
-      .x(d => x(d.year))
-      .y(d => y(d.average));
-
     chartGroup.append("path")
       .datum(processedData.value)
+      .attr("class", "line-path")
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.6)
       .attr("d", line);
+
   } else {
-    // Draw confidence interval FIRST if needed
-    const area = d3.area()
-      .x(d => x(d.year))
-      .y0(d => y(d.average - (d.confidence || 0)))
-      .y1(d => y(d.average + (d.confidence || 0)));
-
-    const confidenceArea = svg.append("path")
-      .datum(processedData.value)
-      .attr("fill", "#cce5df")
-      .attr("stroke", "none")
-      .attr("d", area);
-
     // Only animate opacity on Time2
-    if (props.showConfidence && !props.showAnnotation && !props.showLimitedData) {
+    if (!props.showAnnotation && !props.showLimitedData && !props.scaleXAxis) {
       confidenceArea
         .attr("opacity", 0)
         .transition()
@@ -192,13 +199,9 @@ function renderChart() {
       confidenceArea.attr("opacity", 0.8);
     }
 
-    // Draw the line SECOND (so it appears on top)
-    const line = d3.line()
-      .x(d => x(d.year))
-      .y(d => y(d.average));
-
     svg.append("path")
       .datum(processedData.value)
+      .attr("class", "line-path")
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.6)
@@ -209,6 +212,8 @@ function renderChart() {
   if (props.showAnnotation) {
     const annotationYear = 1906;
     const targetY = 7.5;
+    const annotationYear2 = 1899;
+    const targetY2 = 3.7;
     
     // Add arrowhead marker
     svg.append("defs").append("marker")
@@ -227,6 +232,16 @@ function renderChart() {
     const arrow = svg.append("path")
       .attr("d", d3.line()([[x(annotationYear), y(targetY) - 30], 
                            [x(annotationYear), y(targetY) - 10]]))
+      .attr("opacity", 0)
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 2)
+      .attr("marker-end", "url(#arrow)");
+
+    // Add arrow from above
+    const arrow2 = svg.append("path")
+      .attr("d", d3.line()([[x(annotationYear2) + 10, y(targetY2) + 35], 
+                           [x(annotationYear2) + 3, y(targetY2) + 5]]))
+      .attr("opacity", 0)
       .attr("stroke", "steelblue")
       .attr("stroke-width", 2)
       .attr("marker-end", "url(#arrow)");
@@ -235,13 +250,24 @@ function renderChart() {
     const text = svg.append("text")
       .attr("x", x(annotationYear))
       .attr("y", y(targetY) - 40)
+      .attr("opacity", 0)
       .attr("text-anchor", "middle")
       .attr("fill", "steelblue")
       .attr("font-size", "14px")
       .attr("font-weight", "bold")
       .text("High uncertainty");
 
-    if (props.animateAnnotation) {
+    const text2 = svg.append("text")
+      .attr("x", x(annotationYear2) + 67)
+      .attr("y", y(targetY2) + 55)
+      .attr("opacity", 0)
+      .attr("text-anchor", "middle")
+      .attr("fill", "steelblue")
+      .attr("font-size", "14px")
+      .attr("font-weight", "bold")
+      .text("Interval undefined");
+
+    if (props.animateAnnotation && !props.animateAnnotation2) {
       arrow.attr("opacity", 0)
         .transition()
         .duration(800)
@@ -251,11 +277,48 @@ function renderChart() {
         .transition()
         .duration(800)
         .attr("opacity", 1);
+    } else  if (!props.animateAnnotation && props.animateAnnotation2) {
+      arrow.attr("opacity", 0);
+
+      text.attr("opacity", 0);
+
+      arrow2.attr("opacity", 0)
+        .transition()
+        .duration(800)
+        .attr("opacity", 1);
+
+      text2.attr("opacity", 0)
+        .transition()
+        .duration(800)
+        .attr("opacity", 1);
     } else {
-      arrow.attr("opacity", 1);
-      text.attr("opacity", 1);
+      arrow.attr("opacity", 0);
+      text.attr("opacity", 0);
+      arrow2.attr("opacity", 0);
+      text2.attr("opacity", 0);
     }
   }
+
+  // Fifth page: Scale x axis
+  if (props.scaleXAxis) {
+    confidenceArea
+      .attr("opacity", 0.8)
+      .transition()
+      .duration(100)
+      .attr("opacity", 0);
+
+    x.domain([1950, d3.max(processedData.value, d => d.year)]); 
+    xAxis.transition()
+      .duration(1000)
+      .call(d3.axisBottom(x).tickFormat(d3.format("d")));
+    
+    svg.selectAll('.line-path')
+      .datum(processedData.value)
+      .transition()
+      .duration(1000)
+      .attr('d', line);
+  }
+  
 }
 </script>
 

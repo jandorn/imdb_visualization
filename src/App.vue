@@ -13,6 +13,8 @@ import Time1 from './components/pages/placeholder/Time1.vue';
 import Time2 from './components/pages/placeholder/Time2.vue';
 import Time3 from './components/pages/placeholder/Time3.vue';
 import Time4 from './components/pages/placeholder/Time4.vue';
+import Time5 from './components/pages/placeholder/Time5.vue';
+import Time6 from './components/pages/placeholder/Time6.vue';
 
 const navigationStore = useNavigationStore()
 const movieStore = useMovieStore()
@@ -45,7 +47,9 @@ const pages = {
     Time1,
     Time2,
     Time3,
-    Time4
+    Time4,
+    Time5,
+    Time6
   ]
 };
 

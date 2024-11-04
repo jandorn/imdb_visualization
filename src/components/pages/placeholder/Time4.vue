@@ -10,7 +10,7 @@ const movieStore = useMovieStore();
   <PageLayout>
     <div class="w-full justify-start text-lg">
       <div>
-        The <b>yellow parts</b> of the line indicate years where we have very limited data - either only one movie or no movies at all in our database.
+        For some years, the confidence interval is <b>undefined</b>, because there is only one movie from that year. <br>
       </div>
     </div>
     <div class="mt-8 relative">
@@ -18,8 +18,8 @@ const movieStore = useMovieStore();
         :movies="movieStore.movies" 
         :showConfidence="true"
         :showAnnotation="true"
-        :showLimitedData="true"
-      />
+        :animateAnnotation="false"
+        :animateAnnotation2="true"      />
     </div>
   </PageLayout>
 </template> 

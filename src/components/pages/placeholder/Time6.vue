@@ -10,16 +10,18 @@ const movieStore = useMovieStore();
   <PageLayout>
     <div class="w-full justify-start text-lg">
       <div>
-        Notice the large uncertainty around <b>1906</b> due to the limited number of movies and ratings from that period.<br>
+        Let's have a look at movies from <b>1950 or later</b>, where we have at least 1000 movies per year. <br>
       </div>
     </div>
     <div class="mt-8 relative">
       <GenreTimeChart1 
         :movies="movieStore.movies" 
         :showConfidence="true"
-        :showAnnotation="true"
-        :animateAnnotation="true"
+        :showAnnotation="false"
+        :animateAnnotation="false"
         :animateAnnotation2="false"
+        :scaleXAxis="true"
+        :splitByGenres="true"
       />
     </div>
   </PageLayout>
