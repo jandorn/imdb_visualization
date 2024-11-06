@@ -1,6 +1,7 @@
 <script setup>
 import { useMovieStore } from '../../../stores/movieStore.js';
-import GenreTimeChart1 from '../../charts/GenreTimeChart1.vue';
+import GenreTimeChart2 from '../../charts/GenreTimeChart2.vue';
+import YearlyHistograms from '../../charts/YearlyHistograms_alternative.vue';
 import PageLayout from '../../layout/PageLayout.vue';
 
 const movieStore = useMovieStore();
@@ -10,19 +11,15 @@ const movieStore = useMovieStore();
   <PageLayout>
     <div class="w-full justify-start text-lg">
       <div>
-        Let's have a look at movies from <b>1950 or later</b>, where we have at least 1000 movies per year. <br>
+        The confidence intervals of the average ratings are more reliable after 1950, because the data are normally distributed.<br>
+        They are small, because we have more data and hence <b>strongly clustering around the true mean</b>.<br>
       </div>
     </div>
-    <div class="mt-8 relative">
-      <GenreTimeChart1 
-        :movies="movieStore.movies" 
-        :showConfidence="true"
-        :showAnnotation="false"
-        :animateAnnotation="false"
-        :animateAnnotation2="false"
-        :scaleXAxis="true"
-        :splitByGenres="true"
+    <div class="mt-8 relative flex">
+      <GenreTimeChart2
+      :movies="movieStore.movies" 
       />
+      <YearlyHistograms :movies="movieStore.movies" class="ml-4" />
     </div>
   </PageLayout>
-</template> 
+</template>  

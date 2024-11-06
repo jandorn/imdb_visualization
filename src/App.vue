@@ -11,6 +11,7 @@ import Genre1 from './components/pages/placeholder/Genre1.vue'
 import Genre2 from './components/pages/placeholder/Genre2.vue'
 import Time1 from './components/pages/placeholder/Time1.vue';
 import Time2 from './components/pages/placeholder/Time2.vue';
+import Time22 from './components/pages/placeholder/Time22.vue';
 import Time3 from './components/pages/placeholder/Time3.vue';
 import Time4 from './components/pages/placeholder/Time4.vue';
 import Time5 from './components/pages/placeholder/Time5.vue';
@@ -46,6 +47,7 @@ const pages = {
   "Time": [
     Time1,
     Time2,
+    Time22,
     Time3,
     Time4,
     Time5,

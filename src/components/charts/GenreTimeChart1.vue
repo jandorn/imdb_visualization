@@ -26,6 +26,10 @@ const props = defineProps({
   scaleXAxis: {
     type: Boolean,
     default: false
+  },
+  animateConfidence: {
+    type: Boolean,
+    default: true
   }
 });
 
@@ -157,7 +161,7 @@ function renderChart() {
     //.attr("class", "line-path")
     .attr("fill", "#cce5df")
     .attr("stroke", "none")
-    .attr("opacity", 0)
+    .attr("opacity", props.animateConfidence ? 0 : 0.8)
     .attr("d", area);
 
   const line = d3.line()
@@ -189,7 +193,7 @@ function renderChart() {
 
   } else {
     // Only animate opacity on Time2
-    if (!props.showAnnotation && !props.showLimitedData && !props.scaleXAxis) {
+    if (props.animateConfidence && !props.showAnnotation && !props.showLimitedData && !props.scaleXAxis) {
       confidenceArea
         .attr("opacity", 0)
         .transition()
