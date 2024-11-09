@@ -2,18 +2,33 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 import * as d3 from 'd3';
 import { useNavigationStore } from '../../stores/navigationStore.js';
+import { useCalcGenreAvgStore } from '../../stores/calcGenreAvgStore.js'
 
 const navigationStore = useNavigationStore();
 const chartRef = ref(null);
+const chartWidth = ref(0);
+const chartHeight = ref(400);
+
+const updateChartSize = () => {
+  if (chartRef.value) {
+    chartWidth.value = chartRef.value.clientWidth || 600;
+    chartHeight.value = chartRef.value.clientHeight || 400;
+  }
+};
+
+const handleResize = () => {
+  updateChartSize();
+  createChart();
+};
 
 const createChart = () => {
   if (!chartRef.value) return;
 
   d3.select(chartRef.value).selectAll('svg').remove();
 
-  const margin = { top: 20, right: 30, bottom: 40, left: 40 };
-  const width = Math.min(chartRef.value.clientWidth - margin.left - margin.right, 600);
-  const height = 400 - margin.top - margin.bottom;
+  const margin = { top: 20, right: 30, bottom: 80, left: 40 };
+  const width = Math.min(chartWidth.value - margin.left - margin.right, 1200);
+  const height = chartHeight.value - margin.top - margin.bottom;
 
   const svg = d3.select(chartRef.value)
     .append('svg')
@@ -72,22 +87,29 @@ const createGenre1Chart = (svg, width, height, y) => {
 };
 
 const createGenre3Chart = (svg, width, height, y) => {
-  const genres = Array.from({length: 28}, (_, i) => `Genre ${i + 1}`);
+  const genreAvgStore = useCalcGenreAvgStore()
+  
+  const data = Object.entries(genreAvgStore.genreAverages).map(([genre, value]) => ({
+    genre,
+    value
+  }))
+  
+  const genres = data.map(d => d.genre)
   
   const x = d3.scaleBand()
     .range([0, width])
     .domain(genres)
-    .padding(1);
+    .padding(0)
 
   const xAxis = svg.append('g')
     .attr('class', 'x-axis')
-    .attr('transform', `translate(0,${height-1})`);
+    .attr('transform', `translate(0,${height-1})`)
 
-  const xAxisGroup = xAxis.call(d3.axisBottom(x));
+  const xAxisGroup = xAxis.call(d3.axisBottom(x))
 
   xAxisGroup.call(g => g.select('.domain').attr('stroke-width', 4))
   xAxisGroup.call(g => g.selectAll('.tick line').attr('stroke-width', 2))
-  xAxisGroup.call(g => g.selectAll('text').attr('font-weight', '600'));
+  xAxisGroup.call(g => g.selectAll('text').attr('font-weight', '600'))
 
   svg.append('clipPath')
     .attr('id', 'x-axis-clip')
@@ -95,19 +117,18 @@ const createGenre3Chart = (svg, width, height, y) => {
     .attr('x', 0)
     .attr('y', 0)
     .attr('width', 0)
-    .attr('height', height + 50);
+    .attr('height', height + 50)
 
-  xAxisGroup.attr('clip-path', 'url(#x-axis-clip)');
+  xAxisGroup.attr('clip-path', 'url(#x-axis-clip)')
 
   xAxisGroup.selectAll('text')
-    .attr('transform', 'translate(-10,0)rotate(-45)')
-    .style('text-anchor', 'end');
+    .attr('transform', 'translate(-10,5)rotate(-45)')
+    .style('text-anchor', 'end')
 
   svg.select('#x-axis-clip rect')
     .transition()
     .duration(400)
-    .attr('width', width);
-
+    .attr('width', width)
 
   svg.selectAll('.arrow')
     .transition()
@@ -115,19 +136,14 @@ const createGenre3Chart = (svg, width, height, y) => {
     .attr('x1', (d, i) => x(genres[i]))
     .attr('x2', (d, i) => x(genres[i]))
     .attr('y2', height)
-    .remove();
+    .remove()
 
   svg.selectAll('.arrow-label')
     .transition()
     .duration(100)
     .attr('x', (d, i) => x(genres[i]))
     .attr('y', height + 20)
-    .remove();
-
-  const data = genres.map(genre => ({
-    genre,
-    value: Math.random() * 4 + 5
-  }));
+    .remove()
 
   svg.selectAll('.point')
     .data(data)
@@ -142,11 +158,13 @@ const createGenre3Chart = (svg, width, height, y) => {
     .duration(200)
     .delay((d, i) => i * 30 + 200)
     .attr('cy', d => y(d.value))
-    .attr('r', 5);
-};
+    .attr('r', 5)
+}
 
 onMounted(() => {
+  updateChartSize();
   createChart();
+  window.addEventListener('resize', handleResize);
 });
 
 watch(() => navigationStore.currentPage, () => {
@@ -154,12 +172,10 @@ watch(() => navigationStore.currentPage, () => {
 });
 
 onUnmounted(() => {
-  if (chartRef.value) {
-    d3.select(chartRef.value).selectAll('*').remove();
-  }
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 
 <template>
-  <div ref="chartRef" class="w-full"></div>
+  <div ref="chartRef" class="w-full h-[400px]"></div>
 </template>
