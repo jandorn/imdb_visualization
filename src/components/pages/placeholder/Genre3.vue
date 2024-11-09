@@ -7,6 +7,7 @@ import GenreChart1 from '../../charts/GenreChart1.vue';
   <PageLayout>
     <div class="w-full justify-start text-lg">
       <div>
+        <br>
         The average rating of movies per genre.
       </div>
     </div>
