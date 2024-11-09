@@ -8,14 +8,11 @@ import MatrixImage from '../../../assets/images/matrix.jpeg'
 <template>
   <PageLayout>
     <div class="w-full justify-start text-lg">
-      <div class="mb-2">
+      <div>
         Now lets look at the <b>ratings</b> of movies.
       </div>
       <div>
         IMDb gives registered users the possibility to rate movies on a scale from 1-10.
-      </div>
-      <div>
-        This data is interesting when selecting a movie for a movie night, but not so much in the grand scheme of things.
       </div>
     </div>
     <div class="mt-8 relative overflow-visible">
