@@ -47,24 +47,21 @@ const computeAdjacencyList = () => {
   const genrePairs = {};
   
   movieStore.movies.forEach(movie => {
-    if (movie.genres && movie.genres.trim() !== "") {
-      const genres = movie.genres.split(',');  
-      genres.forEach(genre => {
+    if (movie.genres && movie.genres.length > 0) {
+      movie.genres.forEach(genre => {
         genreOccurrences[genre] = (genreOccurrences[genre] || 0) + 1;
       });
 
-      // step 2: Create genre pairs and count co-occurrences
-      for (let i = 0; i < genres.length; i++) {
-        for (let j = i + 1; j < genres.length; j++) {
-          const pairKey = [genres[i], genres[j]].sort().join('-');
-          genrePairs[pairKey] = (genrePairs[pairKey] || { count: 0, genres: [genres[i], genres[j]] });
+      for (let i = 0; i < movie.genres.length; i++) {
+        for (let j = i + 1; j < movie.genres.length; j++) {
+          const pairKey = [movie.genres[i], movie.genres[j]].sort().join('-');
+          genrePairs[pairKey] = (genrePairs[pairKey] || { count: 0, genres: [movie.genres[i], movie.genres[j]] });
           genrePairs[pairKey].count += 1;
         }
       }
     }
   });
 
-  // step 3: prepare the nodes
   nodes.value = Object.keys(genreOccurrences)
     .filter(genre => genre !== "88") // TODO weird node with 88
     .map(genre => ({
@@ -72,7 +69,6 @@ const computeAdjacencyList = () => {
       count: genreOccurrences[genre]
   }));
 
-  // Step 4 prepare the edges with Jaccard index as weight
   links.value = Object.values(genrePairs).map(pair => {
     const [genre1, genre2] = pair.genres;
     const intersectionCount = pair.count;

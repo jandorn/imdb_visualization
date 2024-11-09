@@ -43,7 +43,7 @@ export const useMovieStore = defineStore('movie', {
           startYear: d.startYear !== '\\N' ? +d.startYear : null,
           endYear: d.endYear !== '\\N' ? +d.endYear : null,
           runtimeMinutes: d.runtimeMinutes !== '\\N' ? +d.runtimeMinutes : null,
-          genres: d.genres,
+          genres: d.genres !== '\\N' ? d.genres.split(',') : [],
           averageRating: +d.averageRating,
           numVotes: +d.numVotes
         }))
