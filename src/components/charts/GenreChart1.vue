@@ -32,10 +32,10 @@ const createChart = () => {
     .call(g => g.selectAll('.tick line').attr('stroke-width', 2))
     .call(g => g.selectAll('text').attr('font-weight', '600'));
 
-  if (navigationStore.currentPage === 'Genre1') {
+  if (navigationStore.currentPage === 'Genre1' || navigationStore.currentPage === 'Genre2') {
     createGenre1Chart(svg, width, height, y);
-  } else if (navigationStore.currentPage === 'Genre2') {
-    createGenre2Chart(svg, width, height, y);
+  } else if (navigationStore.currentPage === 'Genre3') {
+    createGenre3Chart(svg, width, height, y);
   }
 };
 
@@ -71,7 +71,7 @@ const createGenre1Chart = (svg, width, height, y) => {
     .attr('fill', 'black');
 };
 
-const createGenre2Chart = (svg, width, height, y) => {
+const createGenre3Chart = (svg, width, height, y) => {
   const genres = Array.from({length: 28}, (_, i) => `Genre ${i + 1}`);
   
   const x = d3.scaleBand()
