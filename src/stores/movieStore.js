@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import * as d3 from 'd3'
+import { useCalcGenreAvgStore } from './calcGenreAvgStore'
 
 export const useMovieStore = defineStore('movie', {
   state: () => ({
@@ -47,6 +48,10 @@ export const useMovieStore = defineStore('movie', {
           averageRating: +d.averageRating,
           numVotes: +d.numVotes
         }))
+
+        // trigger calculations after loading
+        const genreAvgStore = useCalcGenreAvgStore()
+        await genreAvgStore.calculateGenreAverages()
       } catch (error) {
         this.error = error
         console.error('Fehler beim Laden der Daten:', error)
