@@ -9,6 +9,7 @@ import Intro2 from './components/pages/intro/Intro2.vue'
 import Intro3 from './components/pages/intro/Intro3.vue'
 import Genre1 from './components/pages/placeholder/Genre1.vue'
 import Genre2 from './components/pages/placeholder/Genre2.vue'
+import Genre3 from './components/pages/placeholder/Genre3.vue'
 import Time1 from './components/pages/placeholder/Time1.vue';
 import Time2 from './components/pages/placeholder/Time2.vue';
 import Time22 from './components/pages/placeholder/Time22.vue';
@@ -26,24 +27,7 @@ const pages = {
   "Genre": [
     Genre1,
     Genre2,
-    /*'Page 7',
-    'Page 8',
-    'Page 9',
-    'Page 10',
-    'Page 11',
-    'Page 12',
-    'Page 13',
-    'Page 14',
-    'Page 15',
-    'Page 16',
-    'Page 17',
-    'Page 18',
-    'Page 19',
-    'Page 20',
-    'Page 21',
-    'Page 22',
-    'Page 23',
-    'Page 24',*/
+    Genre3,
   ],
   "Time": [
     Time1,
