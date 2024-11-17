@@ -13,36 +13,33 @@ export const useCalcGenreAvgStore = defineStore('calcGenreAvg', {
       this.isCalculating = true
 
       try {
-        console.log('Movie Store Status:', {
-          isLoading: movieStore.isLoading,
-          moviesCount: movieStore.movies.length
-        })
-
-        const genreSums = {}
-        const genreCounts = {}
-
-        console.log('First few movies:', movieStore.movies.slice(0, 3))
+        const genreData = {}
 
         movieStore.movies.forEach(movie => {
           movie.genres.forEach(genre => {
-            if (!genreSums[genre]) {
-              genreSums[genre] = 0
-              genreCounts[genre] = 0
+            if (!genreData[genre]) {
+              genreData[genre] = {
+                sum: 0,
+                amount: 0,
+                data: []
+              }
             }
-            genreSums[genre] += movie.averageRating
-            genreCounts[genre]++
+            genreData[genre].sum += movie.averageRating
+            genreData[genre].amount++
+            genreData[genre].data.push(movie.averageRating)
           })
         })
 
-        console.log('Genre Sums:', genreSums)
-        console.log('Genre Counts:', genreCounts)
-
-        this.genreAverages = Object.keys(genreSums).reduce((acc, genre) => {
-          acc[genre] = genreSums[genre] / genreCounts[genre]
+        this.genreAverages = Object.keys(genreData).reduce((acc, genre) => {
+          acc[genre] = {
+            average: genreData[genre].sum / genreData[genre].amount,
+            amount: genreData[genre].amount,
+            data: genreData[genre].data
+          }
           return acc
         }, {})
 
-        console.log('Final Genre Averages:', this.genreAverages)
+        console.log('Final Genre Data:', this.genreAverages)
 
       } catch (error) {
         console.error('Fehler bei der Genre-Durchschnittsberechnung:', error)
