@@ -51,8 +51,8 @@ const createChart = () => {
     createGenre1Chart(svg, width, height, y);
   } else if (navigationStore.currentPage === 'Genre3') {
     createGenre3Chart(svg, width, height, y);
-  } else if (navigationStore.currentPage === 'Genre4') {
-    createGenre4Chart(svg, width, height, y);
+  } else if (navigationStore.currentPage === 'Genre4' || navigationStore.currentPage === 'Genre5') {
+    createDistributionChart(svg, width, height, y);
   } 
 };
 
@@ -190,7 +190,7 @@ const createGenre3Chart = (svg, width, height, y) => {
   })
 }
 
-const createGenre4Chart = (svg, width, height, y) => {
+const createDistributionChart = (svg, width, height, y) => {
   const genreAvgStore = useCalcGenreAvgStore()
   
   // Zahlenformatierer für tausender Punkte
@@ -212,10 +212,16 @@ const createGenre4Chart = (svg, width, height, y) => {
     .style('pointer-events', 'none')
 
   // Daten vorbereiten
-  const data = Object.entries(genreAvgStore.genreAverages).map(([genre, stats]) => ({
+  let data = Object.entries(genreAvgStore.genreAverages).map(([genre, stats]) => ({
     genre,
     values: stats.data
   }))
+
+  // Für Genre5: Filtere spezifische Genres
+  if (navigationStore.currentPage === 'Genre5') {
+    const selectedGenres = ['Drama', 'Comedy', 'Documentary', 'Reality-TV', 'Talk-Show', 'Game-Show']
+    data = data.filter(d => selectedGenres.includes(d.genre))
+  }
 
   const maxAmount = d3.max(data, d => d.values.length)
   
@@ -238,105 +244,136 @@ const createGenre4Chart = (svg, width, height, y) => {
   xAxis.call(g => g.select('.domain').attr('stroke-width', 2))
   xAxis.call(g => g.selectAll('.tick line').attr('stroke-width', 2))
 
-  // kernel density estimation function
-  const kde = (kernel, thresholds, data) => {
-    return thresholds.map(t => [t, d3.mean(data, d => kernel(t - d))])
-  }
-
-  // epanechnikov kernel
-  const epanechnikov = (bandwidth) => {
-    return x => Math.abs(x /= bandwidth) <= 1 ? 0.75 * (1 - x * x) / bandwidth : 0
-  }
-
-  // Skalierung für die Breite der Violin Plots
-  const widthScale = d3.scaleSqrt()  // Wurzelskala für bessere visuelle Verteilung
+  // Skalierung für die Breite der Plots
+  const widthScale = d3.scaleSqrt()
     .domain([0, maxAmount])
-    .range([x.bandwidth() * 0.3, x.bandwidth()])  // Min und Max Breite
+    .range([x.bandwidth() * 0.3, x.bandwidth()])
 
-  // Gemeinsame Funktionen und Skalen außerhalb der Schleife
+  // Bins Generator definieren
   const binGenerator = d3.bin()
     .domain([1, 10])
     .thresholds(d3.range(1, 10, 0.1).map(x => Number(x.toFixed(1))))
     .value(d => Number(d.toFixed(1)))
 
-  // Daten pro Genre verarbeiten
+  // KDE Funktionen
+  const kde = (kernel, thresholds, data) => {
+    return thresholds.map(t => [t, d3.mean(data, d => kernel(t - d))])
+  }
+
+  const epanechnikov = (bandwidth) => {
+    return x => Math.abs(x /= bandwidth) <= 1 ? 0.75 * (1 - x * x) / bandwidth : 0
+  }
+
   data.forEach(d => {
     const violinGroup = svg.append('g')
       .attr('transform', `translate(${x(d.genre)},0)`)
 
-    // Bins für aktuelles Genre berechnen
-    const binData = binGenerator(d.values)
-      .map(bin => ({
-        x0: Number(bin.x0?.toFixed(1)),
-        x1: Number(bin.x1?.toFixed(1)),
-        length: bin.length,
-        genre: d.genre
-      }))
-      .filter(bin => bin.x0 != null && bin.x1 != null)
-
-    // Density für Violin Plot
     const bandwidth = 0.5
     const density = kde(epanechnikov(bandwidth), y.ticks(50), d.values)
     const maxDensity = d3.max(density, d => d[1])
     const median = d3.median(d.values)
 
-    // Skalen für aktuelles Genre
-    const maxCount = d3.max(binData, d => d.length)
     const plotWidth = widthScale(d.values.length)
     const xNum = d3.scaleLinear()
       .range([0, plotWidth / 2])
       .domain([0, maxDensity])
 
-    const xHistogram = d3.scaleLinear()
-      .range([0, plotWidth / 2])
-      .domain([0, maxCount])
+    if (navigationStore.currentPage === 'Genre4') {
+      // Linker Violin Plot
+      const leftArea = d3.area()
+        .x0(d => x.bandwidth() / 2 - xNum(d[1]))
+        .x1(x.bandwidth() / 2)
+        .y(d => y(d[0]))
+        .curve(d3.curveCatmullRom)
 
-    // Bins zeichnen
-    const binsGroup = violinGroup.append('g')
-      .attr('class', 'bins')
-
-    binsGroup.selectAll('.bar')
-      .data(binData)
-      .join('rect')
-      .attr('class', 'bar')
-      .attr('x', d => x.bandwidth() / 2 - xHistogram(d.length))
-      .attr('y', d => y(d.x1))
-      .attr('height', d => y(d.x0) - y(d.x1))
-      .attr('width', d => xHistogram(d.length))
-      .style('fill', 'steelblue')
-      .style('opacity', 0.6)
-      .style('stroke', 'white')
-      .style('stroke-width', '.2px')
-
-    // Event-Delegation für Bins
-    binsGroup
-      .on('mouseover', (event) => {
-        if (event.target.classList.contains('bar')) {
-          const bin = d3.select(event.target).datum()
-          d3.select(event.target).style('fill', '#F5C519')
+      violinGroup.append('path')
+        .datum(density)
+        .attr('class', 'violin left')
+        .attr('d', leftArea)
+        .style('fill', 'steelblue')
+        .style('opacity', 0.6)
+        .on('mouseover', function() {
+          d3.select(this).style('fill', '#F5C519')
           tooltip
             .style('visibility', 'visible')
             .html(`
-              <strong>${bin.genre}</strong><br/>
-              Rating: ${bin.x0.toFixed(1)}<br/>
-              Amount: ${formatWithDots(bin.length)}
+              <strong>${d.genre}</strong><br/>
+              Median: ${median.toFixed(2)}<br/>
+              Min: ${d3.min(d.values).toFixed(2)}<br/>
+              Max: ${d3.max(d.values).toFixed(2)}<br/>
+              Amount: ${formatWithDots(d.values.length)}
             `)
-        }
-      })
-      .on('mousemove', (event) => {
-        tooltip
-          .style('top', (event.pageY - 10) + 'px')
-          .style('left', (event.pageX + 10) + 'px')
-      })
-      .on('mouseout', (event) => {
-        if (event.target.classList.contains('bar')) {
-          d3.select(event.target).style('fill', 'steelblue')
+        })
+        .on('mousemove', (event) => {
+          tooltip
+            .style('top', (event.pageY - 10) + 'px')
+            .style('left', (event.pageX + 10) + 'px')
+        })
+        .on('mouseout', function() {
+          d3.select(this).style('fill', 'steelblue')
           tooltip.style('visibility', 'hidden')
-        }
-      })
+        })
+    } else if (navigationStore.currentPage === 'Genre5') {
+      // Histogramm
+      const binData = binGenerator(d.values)
+        .map(bin => ({
+          x0: Number(bin.x0?.toFixed(1)),
+          x1: Number(bin.x1?.toFixed(1)),
+          length: bin.length,
+          genre: d.genre
+        }))
+        .filter(bin => bin.x0 != null && bin.x1 != null)
 
-    // Violin Plot
-    const area = d3.area()
+      const maxCount = d3.max(binData, d => d.length)
+      const xHistogram = d3.scaleLinear()
+        .range([0, plotWidth / 2])
+        .domain([0, maxCount])
+
+      const binsGroup = violinGroup.append('g')
+        .attr('class', 'bins')
+
+      binsGroup.selectAll('.bar')
+        .data(binData)
+        .join('rect')
+        .attr('class', 'bar')
+        .attr('x', d => x.bandwidth() / 2 - xHistogram(d.length))
+        .attr('y', d => y(d.x1))
+        .attr('height', d => y(d.x0) - y(d.x1))
+        .attr('width', d => xHistogram(d.length))
+        .style('fill', 'steelblue')
+        .style('opacity', 0.6)
+        .style('stroke', 'white')
+        .style('stroke-width', '.2px')
+
+      binsGroup
+        .on('mouseover', (event) => {
+          if (event.target.classList.contains('bar')) {
+            const bin = d3.select(event.target).datum()
+            d3.select(event.target).style('fill', '#F5C519')
+            tooltip
+              .style('visibility', 'visible')
+              .html(`
+                <strong>${bin.genre}</strong><br/>
+                Rating: ${bin.x0.toFixed(1)}<br/>
+                Amount: ${formatWithDots(bin.length)}
+              `)
+          }
+        })
+        .on('mousemove', (event) => {
+          tooltip
+            .style('top', (event.pageY - 10) + 'px')
+            .style('left', (event.pageX + 10) + 'px')
+        })
+        .on('mouseout', (event) => {
+          if (event.target.classList.contains('bar')) {
+            d3.select(event.target).style('fill', 'steelblue')
+            tooltip.style('visibility', 'hidden')
+          }
+        })
+    }
+
+    // Rechter Violin Plot (für beide Seiten)
+    const rightArea = d3.area()
       .x0(x.bandwidth() / 2)
       .x1(d => x.bandwidth() / 2 + xNum(d[1]))
       .y(d => y(d[0]))
@@ -344,8 +381,8 @@ const createGenre4Chart = (svg, width, height, y) => {
 
     violinGroup.append('path')
       .datum(density)
-      .attr('class', 'violin')
-      .attr('d', area)
+      .attr('class', 'violin right')
+      .attr('d', rightArea)
       .style('fill', 'steelblue')
       .style('opacity', 0.6)
       .on('mouseover', function() {
