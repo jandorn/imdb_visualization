@@ -8,7 +8,7 @@ import GenreChart1 from '../../charts/GenreChart1.vue';
     <div class="w-full justify-start text-lg">
       <div>
         <br>
-        The average rating of movies per genre with the size of the dots representing the amount of movies.
+        Only the genres Reality-TV, Talk-Show and Game-Show don't follow the same normal distribution which is because of their low amount of movies.
       </div>
     </div>
     <div class="mt-8 relative">
