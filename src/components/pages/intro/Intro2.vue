@@ -63,7 +63,6 @@ const computeAdjacencyList = () => {
   });
 
   nodes.value = Object.keys(genreOccurrences)
-    .filter(genre => genre !== "88") // TODO weird node with 88
     .map(genre => ({
       id: genre,
       count: genreOccurrences[genre]
@@ -75,7 +74,12 @@ const computeAdjacencyList = () => {
     const unionCount = genreOccurrences[genre1] + genreOccurrences[genre2] - intersectionCount;
     const jaccardIndex = intersectionCount / unionCount;
 
-    return { source: genre1, target: genre2, weight: jaccardIndex };
+    return { 
+      source: genre1, 
+      target: genre2, 
+      weight: jaccardIndex,
+      commonMovies: intersectionCount
+    };
   });
 };
 
@@ -125,7 +129,9 @@ function renderForceSimulation() {
     .attr('height', chartHeight.value);
 
   const simulation = d3.forceSimulation(nodes.value)
-    .force("link", d3.forceLink(links.value).id(d => d.id).distance(300)) 
+    .force("link", d3.forceLink(links.value)
+        .id(d => d.id)
+        .distance(d => 300 * (1 - d.weight)))
     .force("charge", d3.forceManyBody().strength(-200)) 
     .force("center", d3.forceCenter(0, 0))
     .force("collision", d3.forceCollide().radius(d => Math.sqrt(d.count) * 0.3 + 5)) 
@@ -144,19 +150,61 @@ function renderForceSimulation() {
     return (value - minWeight) / (maxWeight - minWeight);
   };
 
+  const colorScale = d3.scaleSequential()
+    .domain([minWeight, maxWeight])
+    .interpolator(d3.interpolateYlOrBr);
+
+  const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+    .style("background-color", "white")
+    .style("border", "1px solid #ddd")
+    .style("border-radius", "4px")
+    .style("padding", "8px")
+    .style("font-size", "12px")
+    .style("pointer-events", "none");
+
   const link = graphGroup.append("g")
     .selectAll("line")
     .data(links.value)
     .join("line")
-    .attr("stroke", "#999")
+    .attr("stroke", d => colorScale(d.weight))
     .attr("stroke-opacity", d => scaleOpacity(d.weight))
-    .attr('stroke-width', d => d.weight * 100); 
+    .attr('stroke-width', d => d.weight * 100)
+    .on("mouseover", (event, d) => {
+      tooltip
+        .style("visibility", "visible")
+        .html(`Genre Pair: ${d.source.id} - ${d.target.id}<br>
+               Movie Count: ${d.commonMovies}`);
+    })
+    .on("mousemove", (event) => {
+      tooltip
+        .style("top", (event.pageY - 10) + "px")
+        .style("left", (event.pageX + 10) + "px");
+    })
+    .on("mouseout", () => {
+      tooltip.style("visibility", "hidden");
+    });
 
-    const node = graphGroup.append("g")
+  const node = graphGroup.append("g")
     .selectAll("g")
     .data(nodes.value)
-    .join("g");
-    //.call(drag(simulation));
+    .join("g")
+    .on("mouseover", (event, d) => {
+      tooltip
+        .style("visibility", "visible")
+        .html(`Genre: ${d.id}<br>Count Movies: ${d.count}`);
+    })
+    .on("mousemove", (event) => {
+      tooltip
+        .style("top", (event.pageY - 10) + "px")
+        .style("left", (event.pageX + 10) + "px");
+    })
+    .on("mouseout", () => {
+      tooltip.style("visibility", "hidden");
+    });
 
   node.append("circle")
     .attr('r', d => Math.sqrt(d.count) * 0.3)
