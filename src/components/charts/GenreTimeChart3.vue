@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, onUnmounted, watch, nextTick } from 'vue';
+import { onMounted, ref, onUnmounted, watch, nextTick, computed } from 'vue';
 import * as d3 from 'd3';
 
 const props = defineProps({
@@ -18,44 +18,29 @@ const chartWidth = ref(0);
 const chartHeight = ref(600);
 let processedData = ref([]);
 
+// Add a computed property for filtered movies
+const filteredMovies = computed(() => {
+  if (!props.selectedGenres || props.selectedGenres.length === 0) {
+    return props.movies;
+  }
+  return props.movies.filter(movie => {
+    if (!movie.genres) return false;
+    const movieGenres = Array.isArray(movie.genres) 
+      ? movie.genres 
+      : movie.genres.toString().split(',').map(g => g.trim());
+    
+    return props.selectedGenres.some(genre => movieGenres.includes(genre));
+  });
+});
+
 const processData = () => {
-  if (!props.movies || props.movies.length === 0) {
+  if (!filteredMovies.value || filteredMovies.value.length === 0) {
     processedData.value = [];
     return;
   }
 
   const yearData = {};
-  props.movies.forEach((movie) => {
-    if (movie && movie.startYear && movie.averageRating) {
-      const year = parseInt(movie.startYear);
-      if (!isNaN(year) && year >= 1950) {
-        if (!yearData[year]) {
-          yearData[year] = { ratings: [], sum: 0, count: 0 };
-        }
-        const rating = parseFloat(movie.averageRating);
-        if (!isNaN(rating)) {
-          yearData[year].ratings.push(rating);
-          yearData[year].sum += rating;
-          yearData[year].count++;
-        } else {
-          console.log(movie.averageRating);
-        }
-      }
-    }
-  });
-
-  processedData.value = Object.entries(yearData).map(([year, data]) => ({
-    year: parseInt(year),
-    average: data.sum / data.count,
-    confidence: 1.96 * (d3.deviation(data.ratings) / Math.sqrt(data.count))
-  })).sort((a, b) => a.year - b.year);
-};
-
-const processGenreData = (genre) => {
-  const genreData = props.movies.filter(movie => movie.genres.split(',').includes(genre));
-  const yearData = {};
-
-  genreData.forEach((movie) => {
+  filteredMovies.value.forEach((movie) => {
     if (movie && movie.startYear && movie.averageRating) {
       const year = parseInt(movie.startYear);
       if (!isNaN(year) && year >= 1950) {
@@ -72,23 +57,26 @@ const processGenreData = (genre) => {
     }
   });
 
-  return Object.entries(yearData).map(([year, data]) => ({
-    year: parseInt(year),
-    average: data.sum / data.count
-  })).sort((a, b) => a.year - b.year);
+  processedData.value = Object.entries(yearData)
+    .map(([year, data]) => ({
+      year: parseInt(year),
+      average: data.sum / data.count,
+      confidence: 1.96 * (d3.deviation(data.ratings) / Math.sqrt(data.count))
+    }))
+    .sort((a, b) => a.year - b.year);
 };
 
-watch(() => props.movies, (newMovies) => {
-  if (newMovies.length > 0) {
-    processData();
-    nextTick(() => {
-      updateChartSize();
-      renderChart();
-    });
-  }
+// Update watchers
+watch(filteredMovies, () => {
+  processData();
+  nextTick(() => {
+    updateChartSize();
+    renderChart();
+  });
 }, { immediate: true });
 
 watch(() => props.selectedGenres, () => {
+  processData();
   nextTick(() => {
     updateChartSize();
     renderChart();
@@ -161,13 +149,13 @@ function renderChart() {
   yAxis.call(g => g.selectAll('.tick line').attr('stroke-width', 2))
   yAxis.call(g => g.selectAll('text').attr('font-weight', '600'));
 
-  // Draw confidence interval FIRST if needed
+  // Draw confidence interval
   const area = d3.area()
     .x(d => x(d.year))
     .y0(d => y(d.average - (d.confidence || 0)))
     .y1(d => y(d.average + (d.confidence || 0)));
 
-  const confidenceArea = svg.append("path")
+  svg.append("path")
     .datum(processedData.value)
     .attr("fill", "#cce5df")
     .attr("stroke", "none")
@@ -177,35 +165,18 @@ function renderChart() {
     .duration(1000)
     .attr("opacity", 0.8);
 
+  // Draw the line with appropriate color
   const line = d3.line()
-      .x(d => x(d.year))
-      .y(d => y(d.average));
+    .x(d => x(d.year))
+    .y(d => y(d.average));
 
   svg.append("path")
     .datum(processedData.value)
     .attr("class", "line-path")
     .attr("fill", "none")
-    .attr("stroke", "steelblue")
+    .attr("stroke", props.selectedGenres.length > 0 ? d3.schemeCategory10[0] : "steelblue")
     .attr("stroke-width", 1.6)
     .attr("d", line);
-
-  // Render lines for selected genres without confidence intervals
-  if (props.selectedGenres && props.selectedGenres.length > 0) {
-    props.selectedGenres.forEach((genre, index) => {
-      const genreData = processGenreData(genre);
-
-      const genreLine = d3.line()
-        .x(d => x(d.year))
-        .y(d => y(d.average));
-
-      svg.append("path")
-        .datum(genreData)
-        .attr("fill", "none")
-        .attr("stroke", d3.schemeCategory10[index % 10])
-        .attr("stroke-width", 1.6)
-        .attr("d", genreLine);
-    });
-  }
 }
 </script>
 
