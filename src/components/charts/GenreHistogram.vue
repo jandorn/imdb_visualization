@@ -20,7 +20,11 @@ const filteredMovies = computed(() => {
     return props.movies;
   }
   return props.movies.filter(movie => {
-    const movieGenres = movie.genres.split(',');
+    if (!movie.genres) return false;
+    const movieGenres = Array.isArray(movie.genres)
+      ? movie.genres
+      : movie.genres.toString().split(',').map(g => g.trim());
+    
     return props.selectedGenres.some(genre => movieGenres.includes(genre));
   });
 });
@@ -105,6 +109,11 @@ watch(filteredMovies, (newMovies) => {
   const yearData = processData();
   renderHistograms(yearData);
 }, { immediate: true });
+
+watch(() => props.selectedGenres, () => {
+  const yearData = processData();
+  renderHistograms(yearData);
+}, { deep: true });
 
 onMounted(() => {
   const yearData = processData();
