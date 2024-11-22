@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref, onUnmounted, computed, watch } from 'vue';
 import PageLayout from '../../layout/PageLayout.vue';
-// import { drag as d3Drag } from 'd3-drag';
 import * as d3 from 'd3';
 import { useMovieStore } from '../../../stores/movieStore.js';
 
@@ -12,31 +11,6 @@ const chartWidth = ref(0);
 const chartHeight = ref(600);
 const mapMode = ref(false);
 
-/*
-const drag = simulation => {
-  function dragstarted(event, d) {
-    if (!event.active) simulation.alphaTarget(0.3).restart();
-    d.fx = d.x;
-    d.fy = d.y;
-  }
-  
-  function dragged(event, d) {
-    d.fx = event.x;
-    d.fy = event.y;
-  }
-  
-  function dragended(event, d) {
-    if (!event.active) simulation.alphaTarget(0);
-    d.fx = null;
-    d.fy = null;
-  }
-  
-  return d3Drag()
-    .on("start", dragstarted)
-    .on("drag", dragged)
-    .on("end", dragended);
-}
-*/
 
 let nodes = ref([]);
 let links = ref([]);
@@ -211,6 +185,7 @@ function renderForceSimulation() {
       .attr("dominant-baseline", "central")
       .attr("font-size", "16px")
       .attr("fill", "black")
+      .style("text-shadow", "-2px -2px 4px white, -2px 2px 4px white, 2px -2px 4px white, 2px 2px 4px white")
       .on("mouseover", (event, d) => {
       tooltip
           .style("visibility", "visible")
@@ -295,7 +270,7 @@ const renderMatrix = () => {
     .on("mouseover", (event, d) => {
       tooltip
         .style("visibility", "visible")
-        .html(`${d.source.id} - ${d.target.id}<br>Gemeinsame Filme: ${d.commonMovies}`);
+        .html(`${d.source.id} - ${d.target.id}<br>Movie Count: ${d.commonMovies}`);
     })
     .on("mousemove", (event) => {
       tooltip
@@ -437,7 +412,7 @@ watch(() => movieStore.movies, (newMovies) => {
       <div class="flex flex-col items-center w-full">
         <button 
           @click.stop="toggleMap" 
-          class="mb-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          class="mb-2 px-2 py-1 text-xs bg-[#EABB0F] text-white rounded hover:bg-[#EABB0F]/80"
         >
           {{ mapMode ? 'Show Force Layout' : 'Show Matrix' }}
         </button>
