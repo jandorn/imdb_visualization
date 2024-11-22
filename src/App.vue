@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import Header from './components/Header.vue'
 import { useNavigationStore } from './stores/navigationStore'
 import { useMovieStore } from './stores/movieStore'
+import * as d3 from 'd3';
 
 import Intro1 from './components/pages/intro/Intro1.vue'
 import Intro2 from './components/pages/intro/Intro2.vue'
@@ -74,6 +75,8 @@ const currentPageNumber = computed(() => {
 });
 
 const changePage = (direction) => {
+  d3.selectAll('.tooltip').remove();
+  
   let newChapterIndex = currentChapterIndex.value;
   let newPageIndex = currentPageIndex.value + direction;
   
