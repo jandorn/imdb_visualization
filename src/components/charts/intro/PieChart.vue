@@ -70,11 +70,9 @@ onMounted(() => {
         tooltipContent += `<br>Episodes: ${d.data.episodes.toLocaleString()}`;
       }
       
-      tooltip.transition()
-        .duration(200)
-        .style('opacity', .9);
-      
-      tooltip.html(tooltipContent)
+      tooltip
+        .style('opacity', .9)
+        .html(tooltipContent)
         .style('left', (event.pageX + 15) + 'px')
         .style('top', (event.pageY) + 'px');
 
@@ -84,8 +82,7 @@ onMounted(() => {
         .attr('transform', `scale(1.05)`);
     })
     .on('mouseout', (event) => {
-      tooltip.transition()
-        .duration(500)
+      tooltip
         .style('opacity', 0);
 
       d3.select(event.currentTarget)
@@ -117,11 +114,9 @@ onMounted(() => {
         tooltipContent += `<br>Episodes: ${d.data.episodes.toLocaleString()}`;
       }
       
-      tooltip.transition()
-        .duration(200)
-        .style('opacity', .9);
-      
-      tooltip.html(tooltipContent)
+      tooltip
+        .style('opacity', .9)
+        .html(tooltipContent)
         .style('left', (event.pageX + 15) + 'px')
         .style('top', (event.pageY) + 'px');
 
@@ -132,8 +127,7 @@ onMounted(() => {
         .attr('transform', `scale(1.05)`);
     })
     .on('mouseout', (event, d) => {
-      tooltip.transition()
-        .duration(500)
+      tooltip
         .style('opacity', 0);
 
       svg.selectAll('path')
