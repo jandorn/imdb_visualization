@@ -4,6 +4,7 @@ import PageLayout from '../../layout/PageLayout.vue';
 import * as d3 from 'd3';
 import LogoWhite from '../../../assets/logo/IMDb_white.png';
 import PieChart from '../../charts/intro/PieChart.vue';
+import Top100Table from '../../charts/intro/Top100Table.vue';
 </script>
 
 <template>
@@ -14,10 +15,18 @@ import PieChart from '../../charts/intro/PieChart.vue';
         <div class="text-center md:w-[500px] mx-auto text-xl mt-4 text-gray-600 z-10">
           Discover trends, insights, and the hidden dynamics of your favorite movies and shows.
         </div>
-        <div class="flex flex-col w-min">
-          <PieChart />
-          <div class="text-center font-bold -mt-8 text-gray-600 z-10">
-            IMDb Data categories
+        <div class="flex justify-center gap-8 h-full">
+          <div class="flex flex-col">
+            <PieChart />
+            <div class="text-center font-bold -mt-8 text-gray-600 z-10">
+              IMDb Data categories
+            </div>
+          </div>
+          <div class="mt-16">
+            <div class="text-center font-bold text-gray-600 z-10 mb-4">
+              Top 100 Movies
+            </div>
+            <Top100Table />
           </div>
         </div>
         <div class="absolute bottom-0 mx-auto left-0 right-0 -z-10">
