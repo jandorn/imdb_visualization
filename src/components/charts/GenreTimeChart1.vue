@@ -131,7 +131,6 @@ function renderChart() {
     .domain([1, 10])
     .range([height, 0]);
 
-  // X axis with slightly thinner lines
   const xAxis = svg.append("g")
     .attr("class", "x-axis")
     .attr("transform", `translate(0,${height-1})`);
@@ -142,7 +141,6 @@ function renderChart() {
   xAxisGroup.call(g => g.selectAll('.tick line').attr('stroke-width', 2))
   xAxisGroup.call(g => g.selectAll('text').attr('font-weight', '600'));
 
-  // Y axis with thicker lines
   const yAxis = svg.append("g")
     .call(d3.axisLeft(y).tickPadding(10));
 
@@ -150,7 +148,6 @@ function renderChart() {
   yAxis.call(g => g.selectAll('.tick line').attr('stroke-width', 2))
   yAxis.call(g => g.selectAll('text').attr('font-weight', '600'));
 
-  // Draw confidence interval FIRST if needed
   const area = d3.area()
     .x(d => x(d.year))
     .y0(d => y(d.average - (d.confidence || 0)))
@@ -158,7 +155,6 @@ function renderChart() {
 
   const confidenceArea = svg.append("path")
     .datum(processedData.value)
-    //.attr("class", "line-path")
     .attr("fill", "#cce5df")
     .attr("stroke", "none")
     .attr("opacity", props.animateConfidence ? 0 : 0.8)
@@ -172,7 +168,6 @@ function renderChart() {
       .attr("clip-path", "url(#clip)");
 
   if (!props.showConfidence) {
-    // First page: Animate the line from left to right
     svg.append("defs")
       .append("clipPath")
       .attr("id", "clip")
@@ -192,7 +187,6 @@ function renderChart() {
       .attr("d", line);
 
   } else {
-    // Only animate opacity on Time2
     if (props.animateConfidence && !props.showAnnotation && !props.showLimitedData && !props.scaleXAxis) {
       confidenceArea
         .attr("opacity", 0)
@@ -212,14 +206,12 @@ function renderChart() {
       .attr("d", line);
   }
 
-  // Add annotation if showAnnotation is true
   if (props.showAnnotation) {
     const annotationYear = 1906;
     const targetY = 7.5;
     const annotationYear2 = 1899;
     const targetY2 = 3.7;
     
-    // Add arrowhead marker
     svg.append("defs").append("marker")
       .attr("id", "arrow")
       .attr("viewBox", "0 -5 10 10")
@@ -232,7 +224,6 @@ function renderChart() {
       .attr("d", "M0,-5L10,0L0,5")
       .attr("fill", "steelblue");
 
-    // Add arrow from above
     const arrow = svg.append("path")
       .attr("d", d3.line()([[x(annotationYear), y(targetY) - 30], 
                            [x(annotationYear), y(targetY) - 10]]))
@@ -241,7 +232,6 @@ function renderChart() {
       .attr("stroke-width", 2)
       .attr("marker-end", "url(#arrow)");
 
-    // Add arrow from above
     const arrow2 = svg.append("path")
       .attr("d", d3.line()([[x(annotationYear2) + 10, y(targetY2) + 35], 
                            [x(annotationYear2) + 3, y(targetY2) + 5]]))
@@ -250,7 +240,6 @@ function renderChart() {
       .attr("stroke-width", 2)
       .attr("marker-end", "url(#arrow)");
 
-    // Add annotation text above
     const text = svg.append("text")
       .attr("x", x(annotationYear))
       .attr("y", y(targetY) - 40)
@@ -303,7 +292,6 @@ function renderChart() {
     }
   }
 
-  // Fifth page: Scale x axis
   if (props.scaleXAxis) {
     confidenceArea
       .attr("opacity", 0.8)

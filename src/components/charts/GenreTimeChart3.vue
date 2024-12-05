@@ -10,6 +10,10 @@ const props = defineProps({
   selectedGenres: {
     type: Array,
     required: true
+  },
+  arrowYear: {
+    type: Number,
+    default: null 
   }
 });
 
@@ -18,7 +22,6 @@ const chartWidth = ref(0);
 const chartHeight = ref(600);
 let processedData = ref([]);
 
-// Add a computed property for filtered movies
 const filteredMovies = computed(() => {
   if (!props.selectedGenres || props.selectedGenres.length === 0) {
     return props.movies;
@@ -66,7 +69,6 @@ const processData = () => {
     .sort((a, b) => a.year - b.year);
 };
 
-// Update watchers
 watch(filteredMovies, () => {
   processData();
   nextTick(() => {
@@ -123,14 +125,13 @@ function renderChart() {
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
   const x = d3.scaleLinear()
-    .domain([1950, d3.max(processedData.value, d => d.year)]) // Set the domain to start from 1950
+    .domain([1950, d3.max(processedData.value, d => d.year)]) 
     .range([0, width]);
 
   const y = d3.scaleLinear()
     .domain([1, 10])
     .range([height, 0]);
 
-  // X axis with slightly thinner lines
   const xAxis = svg.append("g")
     .attr("class", "x-axis")
     .attr("transform", `translate(0,${height-1})`);
@@ -141,7 +142,6 @@ function renderChart() {
   xAxisGroup.call(g => g.selectAll('.tick line').attr('stroke-width', 2))
   xAxisGroup.call(g => g.selectAll('text').attr('font-weight', '600'));
 
-  // Y axis with thicker lines
   const yAxis = svg.append("g")
     .call(d3.axisLeft(y).tickPadding(10));
 
@@ -149,7 +149,6 @@ function renderChart() {
   yAxis.call(g => g.selectAll('.tick line').attr('stroke-width', 2))
   yAxis.call(g => g.selectAll('text').attr('font-weight', '600'));
 
-  // Draw confidence interval
   const area = d3.area()
     .x(d => x(d.year))
     .y0(d => y(d.average - (d.confidence || 0)))
@@ -165,7 +164,6 @@ function renderChart() {
     .duration(1000)
     .attr("opacity", 0.8);
 
-  // Draw the line with appropriate color
   const line = d3.line()
     .x(d => x(d.year))
     .y(d => y(d.average));
@@ -177,6 +175,32 @@ function renderChart() {
     .attr("stroke", props.selectedGenres.length > 0 ? d3.schemeCategory10[0] : "steelblue")
     .attr("stroke-width", 1.6)
     .attr("d", line);
+
+  if (props.arrowYear) {
+    const arrowX = x(props.arrowYear); 
+    const fixedYValue = 7.5;
+    const arrowY = y(fixedYValue);
+
+    svg.append("line")
+      .attr("x1", arrowX-20)
+      .attr("y1", 60) 
+      .attr("x2", arrowX)
+      .attr("y2", arrowY) 
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 2)
+      .attr("marker-end", "url(#arrowhead)");
+
+    svg.append("defs").append("marker")
+      .attr("id", "arrowhead")
+      .attr("markerWidth", 10)
+      .attr("markerHeight", 7)
+      .attr("refX", 0)
+      .attr("refY", 3.5)
+      .attr("orient", "auto")
+      .append("polygon")
+      .attr("points", "0 0, 10 3.5, 0 7")
+      .attr("fill", "steelblue");
+  }
 }
 </script>
 

@@ -18,8 +18,8 @@ const genres = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Sci-Fi', 'Thr
         Select a genre to display its average ratings over time, and its distribution of ratings.
       </div>
     </div>
-    <div class="genre-selection-panel">
-      <select v-model="selectedGenre">
+    <div class="genre-selection-panel" style="margin-top: 4px;">
+      <select v-model="selectedGenre" @click.stop>
         <option value="">All Genres</option>
         <option v-for="genre in genres" :key="genre" :value="genre">{{ genre }}</option>
       </select>

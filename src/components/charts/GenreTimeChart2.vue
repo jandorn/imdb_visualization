@@ -124,7 +124,6 @@ function renderChart() {
   yAxis.call(g => g.selectAll('.tick line').attr('stroke-width', 2))
   yAxis.call(g => g.selectAll('text').attr('font-weight', '600'));
 
-  // Draw confidence interval FIRST if needed
   const area = d3.area()
     .x(d => x(d.year))
     .y0(d => y(d.average - (d.confidence || 0)))
