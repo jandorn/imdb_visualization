@@ -8,7 +8,7 @@ import MatrixImage from '../../../assets/images/matrix.jpeg'
 <template>
   <PageLayout>
     <div class="w-full justify-start text-lg">
-      Every movie has one or more <b>genres</b> associated to it.
+      Every movie has one or more <b>genres</b> associated to it.<br>
       So let's add a second dimension to the chart and plot the average rating of all movies of a certain genre.
     </div>
     <div class="mt-8 relative overflow-visible">
