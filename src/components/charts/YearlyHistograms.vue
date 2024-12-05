@@ -90,7 +90,7 @@ const renderHistograms = (yearData) => {
     .attr("height", d => height - y(d.length))
     .attr("fill", "steelblue")
     .on("mouseover", function(event, d) {
-      d3.select(this).attr("fill", "yellow");
+      d3.select(this).attr("fill", "#F5C519");
       tooltip.html(`Movie count: ${d.length}`)
         .style("visibility", "visible")
         .style("top", `${event.pageY}px`) 
