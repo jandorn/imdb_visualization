@@ -60,19 +60,64 @@ const renderHistograms = (yearData) => {
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
+  const tooltip = d3.select(histogramsRef.value)
+    .append("div")
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+    .style("background", "lightgrey")
+    .style("padding", "5px")
+    .style("border-radius", "5px");
+
   svg.each(function([year, ratings]) {
+    const x = d3.scaleLinear()
+      .domain([1, 10])
+      .range([0, width]);
+
+    const histogram = d3.histogram()
+      .domain(x.domain())
+      .thresholds(x.ticks(10));
+
     const bins = histogram(ratings);
 
-    d3.select(this).append("g")
-      .selectAll("rect")
-      .data(bins)
-      .enter()
-      .append("rect")
-      .attr("x", d => x(d.x0))
-      .attr("y", d => y(d.length))
-      .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
-      .attr("height", d => height - y(d.length))
-      .attr("fill", "steelblue");
+    const y = d3.scaleLinear()
+      .domain([0, maxBinCount])
+      .range([height, 0]);
+
+      const tooltip = d3.select("body") 
+  .append("div")
+  .style("position", "absolute")
+  .style("visibility", "hidden")
+  .style("background-color", "white")
+  .style("padding", "5px")
+  .style("border-radius", "4px")
+  .style("font-size", "12px");
+
+  d3.select(this).append("g")
+    .selectAll("rect")
+    .data(bins)
+    .enter()
+    .append("rect")
+    .attr("x", d => x(d.x0))
+    .attr("y", d => y(d.length))
+    .attr("width", x(bins[0].x1) - x(bins[0].x0) - 1)
+    .attr("height", d => height - y(d.length))
+    .attr("fill", "steelblue")
+    .on("mouseover", function(event, d) {
+      d3.select(this).attr("fill", "yellow");
+      tooltip.html(`Movie count: ${d.length}`)
+        .style("visibility", "visible")
+        .style("top", `${event.pageY}px`)
+        .style("left", `${event.pageX + 10}px`); 
+    })
+    .on("mousemove", function(event) {
+      tooltip
+        .style("top", `${event.pageY}px`) 
+        .style("left", `${event.pageX + 10}px`); 
+    })
+    .on("mouseout", function() {
+      d3.select(this).attr("fill", "steelblue");
+      tooltip.style("visibility", "hidden");
+    });
 
     d3.select(this).append("text")
       .attr("x", width / 2)

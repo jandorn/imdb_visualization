@@ -8,7 +8,7 @@ import { ref } from 'vue';
 const movieStore = useMovieStore();
 const selectedGenre = ref('');
 
-const genres = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Sci-Fi', 'Thriller', 'Documentary', 'Reality-TV', 'Game-Show', 'Talk-Show'];
+const genres = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Sci-Fi', 'Thriller', 'Documentary'];
 </script>
 
 <template>
