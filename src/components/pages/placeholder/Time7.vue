@@ -24,30 +24,68 @@ const genres = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Sci-Fi', 'Thr
         <option v-for="genre in genres" :key="genre" :value="genre">{{ genre }}</option>
       </select>
     </div>
-    <div class="mt-8 relative flex">
-        <div class="w-3/4">
-          <GenreTimeChart3 
-            :movies="movieStore.movies" 
-            :selectedGenres="selectedGenre ? [selectedGenre] : []" 
-          />
-        </div>
-        <div class="ml-4">
-          <GenreHistogram 
-            :movies="movieStore.movies" 
-            :selectedGenres="selectedGenre ? [selectedGenre] : []"
-          />
-        </div>
+    <div class="mt-8 relative flex flex-wrap">
+      <div class="line-chart-container">
+        <GenreTimeChart3 
+          :movies="movieStore.movies" 
+          :selectedGenres="selectedGenre ? [selectedGenre] : []" 
+        />
+      </div>
+      <div class="histograms-container">
+        <GenreHistogram 
+          :movies="movieStore.movies" 
+          :selectedGenres="selectedGenre ? [selectedGenre] : []"
+        />
+      </div>
     </div>
   </PageLayout>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      genres: ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Sci-Fi', 'Thriller']
-    };
+<style scoped>
+.charts-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between; 
+  gap: 16px; 
+}
+
+.line-chart-container {
+  flex: 0 0 700px; 
+  min-width: 700px;
+}
+
+.histograms-container {
+  flex: 1; 
+  min-width: 400px;
+}
+
+@media (max-width: 1000px) {
+  .charts-container {
+    flex-direction: column; 
+    gap: 16px; 
   }
-};
-</script>
+
+  .line-chart-container {
+    flex: 0 0 auto; 
+    margin-bottom: 0;
+  }
+
+  .histograms-container {
+    flex: 1 1 auto; 
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 500px) {
+  .line-chart-container {
+    width: 100%;
+    min-width: auto; 
+  }
+
+  .histograms-container {
+    width: 100%; 
+    min-width: auto;
+  }
+}
+</style>
 
