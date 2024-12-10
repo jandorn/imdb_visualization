@@ -28,4 +28,5 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-*.csv
+src/assets/data/AllMovies.csv
+src/assets/data/AllMoviesLanguages.csv
