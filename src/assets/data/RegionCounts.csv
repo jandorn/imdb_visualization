@@ -1,0 +1,122 @@
+country_iso,amount_movies,country_name,country_language
+ARE,651,United Arab Emirates (the),Arabic
+ALB,80,Albania,Albanian
+ARM,4,Armenia,Armenian
+ARG,781,Argentina,Spanish
+AUT,296,Austria,German
+AUS,996,Australia,English
+AZE,417,Azerbaijan,Azerbaijani
+BIH,79,Bosnia and Herzegovina,Bosnian
+BGD,25,Bangladesh,Bengali
+BEL,139,Belgium,Dutch
+BFA,1,Burkina Faso,French
+BGR,993,Bulgaria,Bulgarian
+BEN,3,Benin,French
+BOL,15,Bolivia (Plurinational State of),Spanish
+BRA,820,Brazil,Portuguese
+BLR,55,Belarus,Belarusian
+CAN,1000,Canada,English
+COG,2,Congo (the),French
+CHE,63,Switzerland,German
+CHL,509,Chile,Spanish
+CMR,6,Cameroon,French
+CHN,749,China,Chinese
+COL,405,Colombia,Spanish
+CRI,15,Costa Rica,Spanish
+CSHH,65,,
+CUB,10,Cuba,Spanish
+CZE,879,Czechia,Czech
+DDDE,7,,
+DEU,834,Germany,German
+DNK,473,Denmark,Danish
+DOM,7,Dominican Republic (the),Spanish
+DZA,9,Algeria,Arabic
+ECU,948,Ecuador,Spanish
+EST,665,Estonia,Estonian
+EGY,953,Egypt,Arabic
+ESP,985,Spain,Spanish
+FIN,617,Finland,Finnish
+FRA,849,France,French
+GBR,996,United Kingdom of Great Britain and Northern Ireland (the),English
+GEO,128,Georgia,Georgian
+GRC,926,Greece,Greek
+GTM,7,Guatemala,Spanish
+HKG,911,Hong Kong,English
+HRV,845,Croatia,Croatian
+HUN,832,Hungary,Hungarian
+IDN,767,Indonesia,Indonesian
+IRL,318,Ireland,English
+ISR,936,Israel,Hebrew
+IND,1000,India,Hindi
+IRN,281,Iran (Islamic Republic of),Persian
+ISL,106,Iceland,Icelandic
+ITA,883,Italy,Italian
+JAM,11,Jamaica,English
+JPN,1000,Japan,Japanese
+KGZ,10,Kyrgyzstan,Kyrgyz
+PRK,1,Korea (the Democratic People's Republic of),Korean
+KOR,840,Korea (the Republic of),Korean
+KAZ,451,Kazakhstan,Kazakh
+LBN,3,Lebanon,Arabic
+LIE,3,Liechtenstein,German
+LKA,3,Sri Lanka,Sinhala
+LTU,959,Lithuania,Lithuanian
+LUX,28,Luxembourg,French
+LVA,727,Latvia,Latvian
+MAR,4,Morocco,Arabic
+MCO,1,Monaco,French
+MDA,14,Moldova (the Republic of),Romanian
+MNE,4,Montenegro,Montenegrin
+MKD,46,Republic of North Macedonia,Macedonian
+MNG,2,Mongolia,Mongolian
+MLT,1,Malta,Maltese
+MEX,912,Mexico,Spanish
+MYS,31,Malaysia,Malay
+MOZ,3,Mozambique,Portuguese
+NGA,10,Nigeria,English
+NLD,956,Netherlands (the),Dutch
+NOR,388,Norway,Norwegian
+NPL,1,Nepal,Nepali
+NZL,294,New Zealand,English
+PAN,50,Panama,Spanish
+PER,632,Peru,Spanish
+PHL,948,Philippines (the),English
+PAK,12,Pakistan,Urdu
+POL,897,Poland,Polish
+PRI,13,Puerto Rico,Spanish
+PRT,811,Portugal,Portuguese
+PRY,7,Paraguay,Spanish
+QAT,1,Qatar,Arabic
+ROU,886,Romania,Romanian
+SRB,988,Serbia,Serbian
+RUS,993,Russian Federation (the),Russian
+SAU,7,Saudi Arabia,Arabic
+SWE,920,Sweden,Swedish
+SGP,977,Singapore,English
+SVN,780,Slovenia,Slovenian
+SVK,807,Slovakia,Slovak
+SEN,1,Senegal,French
+SUHH,85,,
+SLV,3,El Salvador,Spanish
+THA,962,Thailand,Thai
+TJK,12,Tajikistan,Tajik
+TKM,2,Turkmenistan,Turkmen
+TUN,4,Tunisia,Arabic
+TUR,921,Turkey,Turkish
+TWN,999,Taiwan (Province of China),Chinese
+UKR,998,Ukraine,Ukrainian
+USA,999,United States of America (the),English
+URY,347,Uruguay,Spanish
+UZB,669,Uzbekistan,Uzbek
+VEN,281,Venezuela (Bolivarian Republic of),Spanish
+VNM,958,Viet Nam,Vietnamese
+XAS,17,,
+XEU,21,,
+XKO,5,,
+XSA,12,,
+XWG,77,,
+XWW,162,,
+XYU,64,,
+YEM,1,Yemen,Arabic
+YUCS,8,,
+ZAF,987,South Africa,English
