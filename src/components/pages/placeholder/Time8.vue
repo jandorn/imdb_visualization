@@ -16,19 +16,21 @@ const movieStore = useMovieStore();
       </div>
     </div>
     <div class="mt-8 relative flex flex-wrap">
-      <div class="line-chart-container">
-        <GenreTimeChart3 
-          :movies="movieStore.movies" 
-          :selectedGenres="[]" 
-          :arrowYear="2021"
-          :showConfidence="true"
-          :showAnnotation="true"
-          :animateAnnotation="false"
-          :animateAnnotation2="true"      
-        />
-      </div>
-      <div class="histograms-container">
-        <YearlyHistograms :movies="movieStore.movies" class="ml-4" />
+      <div class="charts-container">
+        <div class="line-chart-container">
+          <GenreTimeChart3 
+            :movies="movieStore.movies" 
+            :selectedGenres="[]" 
+            :arrowYear="2021"
+            :showConfidence="true"
+            :showAnnotation="true"
+            :animateAnnotation="false"
+            :animateAnnotation2="true"      
+          />
+        </div>
+        <div class="histograms-container">
+          <YearlyHistograms :movies="movieStore.movies" />
+        </div>
       </div>
     </div>
   </PageLayout>
@@ -81,4 +83,3 @@ const movieStore = useMovieStore();
   }
 }
 </style>
-

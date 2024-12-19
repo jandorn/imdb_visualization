@@ -15,18 +15,20 @@ const movieStore = useMovieStore();
       </div>
     </div>
     <div class="mt-8 relative flex flex-wrap">
-      <div class="line-chart-container">
-        <GenreTimeChart1 
-          :movies="movieStore.movies" 
-          :showConfidence="true"
-          :showAnnotation="false"
-          :animateAnnotation="false"
-          :animateAnnotation2="false"
-          :scaleXAxis="true"
-        />
-      </div>
-      <div class="histograms-container">
-        <YearlyHistograms :movies="movieStore.movies" />
+      <div class="charts-container">
+        <div class="line-chart-container">
+          <GenreTimeChart1 
+            :movies="movieStore.movies" 
+            :showConfidence="true"
+            :showAnnotation="false"
+            :animateAnnotation="false"
+            :animateAnnotation2="false"
+            :scaleXAxis="true"
+          />
+        </div>
+        <div class="histograms-container">
+          <YearlyHistograms :movies="movieStore.movies" />
+        </div>
       </div>
     </div>
   </PageLayout>

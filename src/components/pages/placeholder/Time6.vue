@@ -16,13 +16,15 @@ const movieStore = useMovieStore();
       </div>
     </div>
     <div class="mt-8 relative flex flex-wrap">
-      <div class="line-chart-container">
-        <GenreTimeChart2
-          :movies="movieStore.movies" 
-        />
-      </div>
-      <div class="histograms-container">
-        <YearlyHistograms :movies="movieStore.movies" />
+      <div class="charts-container">
+        <div class="line-chart-container">
+          <GenreTimeChart2
+            :movies="movieStore.movies" 
+          />
+        </div>
+        <div class="histograms-container">
+          <YearlyHistograms :movies="movieStore.movies" />
+        </div>
       </div>
     </div>
   </PageLayout>

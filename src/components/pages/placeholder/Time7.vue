@@ -25,17 +25,19 @@ const genres = ['Action', 'Comedy', 'Drama', 'Horror', 'Romance', 'Sci-Fi', 'Thr
       </select>
     </div>
     <div class="mt-8 relative flex flex-wrap">
-      <div class="line-chart-container">
-        <GenreTimeChart3 
-          :movies="movieStore.movies" 
-          :selectedGenres="selectedGenre ? [selectedGenre] : []" 
-        />
-      </div>
-      <div class="histograms-container">
-        <GenreHistogram 
-          :movies="movieStore.movies" 
-          :selectedGenres="selectedGenre ? [selectedGenre] : []"
-        />
+      <div class="charts-container">
+        <div class="line-chart-container">
+          <GenreTimeChart3 
+            :movies="movieStore.movies" 
+            :selectedGenres="selectedGenre ? [selectedGenre] : []" 
+          />
+        </div>
+        <div class="histograms-container">
+          <GenreHistogram 
+            :movies="movieStore.movies" 
+            :selectedGenres="selectedGenre ? [selectedGenre] : []"
+          />
+        </div>
       </div>
     </div>
   </PageLayout>

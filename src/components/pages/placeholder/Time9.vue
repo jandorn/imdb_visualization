@@ -83,4 +83,3 @@ const movieStore = useMovieStore();
 </style>
 
 
-
