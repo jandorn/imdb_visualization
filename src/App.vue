@@ -9,6 +9,9 @@ import * as d3 from 'd3';
 import Intro1 from './components/pages/intro/Intro1.vue'
 import Intro2 from './components/pages/intro/Intro2.vue'
 import Intro3 from './components/pages/intro/Intro3.vue'
+import Languages1 from './components/pages/intro/Languages1.vue'
+import Languages2 from './components/pages/intro/Languages2.vue'
+import Languages3 from './components/pages/intro/Languages3.vue'
 import Genre1 from './components/pages/placeholder/Genre1.vue'
 import Genre2 from './components/pages/placeholder/Genre2.vue'
 import Genre3 from './components/pages/placeholder/Genre3.vue'
@@ -30,7 +33,7 @@ const movieStore = useMovieStore()
 const top100MoviesStore = useTop100MoviesStore()
 
 const pages = {
-  "Intro": [Intro1, Intro2, 'Page 3', 'Page 4'],
+  "Intro": [Intro1, Intro2, Languages1, Languages2, Languages3],
   "Genre": [
     Genre1,
     Genre2,
