@@ -58,7 +58,7 @@ const hideTooltip = () => {
   tooltip.value.visible = false;
 };
 
-const randomMovie = movies.length > 0 ? movies[Math.floor(Math.random() * movies.length)] : null; // Select a random movie
+const randomMovie = movies.length > 0 ? movies[Math.floor(Math.random() * movies.length)] : null; 
 
 let svg, g;
 const isZoomedIn = ref(false); 
