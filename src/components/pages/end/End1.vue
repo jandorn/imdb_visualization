@@ -33,31 +33,6 @@ const spiralData = movies.map((movie, index) => {
   };
 });
 
-const tooltip = ref({
-  visible: false,
-  title: '',
-  year: '',
-  runtime: '',
-  x: 0,
-  y: 0
-});
-
-const showTooltip = (event, point) => {
-  tooltip.value = {
-    visible: true,
-    title: point.title,
-    year: point.year,
-    runtime: point.runtime,
-    rating: point.rating,
-    x: event.clientX, 
-    y: event.clientY   
-  };
-};
-
-const hideTooltip = () => {
-  tooltip.value.visible = false;
-};
-
 let svg, g;
 const isZoomedIn = ref(false); 
 
@@ -65,14 +40,39 @@ onMounted(() => {
   svg = d3.select("#spiral");
   g = svg.append("g"); 
 
+  const tooltip = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+    .style("background-color", "white")
+    .style("border", "1px solid #ccc")
+    .style("padding", "8px")
+    .style("border-radius", "4px")
+    .style("box-shadow", "0 2px 8px rgba(0, 0, 0, 0.2)")
+    .style("pointer-events", "none");
+
   spiralData.forEach(point => {
     g.append("circle")
       .attr("cx", point.x)
       .attr("cy", point.y)
       .attr("r", Math.sqrt(point.runtime) * 0.08)
       .attr("fill", point.color)
-      .on("mouseover", (event) => showTooltip(event, point))
-      .on("mouseleave", hideTooltip);
+      .on("mouseover", (event) => {
+        tooltip.style("visibility", "visible")
+          .html(`
+            <strong>${point.title}</strong><br>
+            Year: ${point.year}<br>
+            Runtime: ${point.runtime} mins<br>
+            Average Rating: ${point.rating}
+          `);
+      })
+      .on("mousemove", (event) => {
+        tooltip.style("top", (event.pageY + 10) + "px")
+          .style("left", (event.pageX + 10) + "px");
+      })
+      .on("mouseleave", () => {
+        tooltip.style("visibility", "hidden");
+      });
   });
 });
 
@@ -96,8 +96,11 @@ const toggleZoom = (event) => {
 <template>
   <PageLayout>
     <div class="w-full justify-start text-lg">
-      Have you also heard that <b>movies got longer in the recent past</b>? Let's visualize them in a spiral of equidistant points.<br>
-      <b>Zoom in</b> to dive into the first half of the 20th century. Looks like there were quite some long movies, right?
+      <div class="w-full justify-start text-lg">
+      Have you also heard that <b>movies got longer in the recent past</b>? Let's visualize them in a spiral of equidistant points, where the movies are placed on a spiral ordered by start year, beginning from the center. The dot size and brightness reflects the runtime.<br>
+      <b>Zoom in</b> to dive into the first half of the 20th century. Looks like movie lengths varied more in these years, right?<br>
+      
+      </div>
     </div>
 
     <div class="mt-4 flex">
@@ -113,15 +116,6 @@ const toggleZoom = (event) => {
       <svg id="spiral" width="800" height="800" viewBox="-450 -450 900 900">
         <g></g>
       </svg>
-
-      <div v-if="tooltip.visible" 
-           class="tooltip" 
-           :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }">
-        <strong>{{ tooltip.title }}</strong><br>
-        Year: {{ tooltip.year }}<br>
-        Runtime: {{ tooltip.runtime }} mins<br>
-        Average Rating: {{ tooltip.rating }}
-      </div>
     </div>
   </PageLayout>
 </template>
@@ -142,5 +136,5 @@ const toggleZoom = (event) => {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   pointer-events: none; 
 }
-</style> 
+</style>
 
