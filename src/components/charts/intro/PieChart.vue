@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, onUnmounted } from 'vue';
 import * as d3 from 'd3';
 
 const data = [
@@ -17,7 +17,23 @@ const height = 200;
 const padding = 20;
 const radius = Math.min(width, height) / 2 - padding;
 
+let tooltip;
+
 onMounted(() => {
+  if (!tooltip) {
+    tooltip = d3.select('body')
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('visibility', 'hidden')
+      .style('position', 'absolute')
+      .style('background-color', 'white')
+      .style('padding', '10px')
+      .style('border', '1px solid #ccc')
+      .style('border-radius', '5px')
+      .style('pointer-events', 'none')
+      .style('z-index', '9999');
+  }
+
   const svg = d3.select('#pie-chart')
     .append('svg')
     .attr('width', width + padding * 2)
@@ -47,17 +63,6 @@ onMounted(() => {
     .innerRadius(0)
     .outerRadius(radius);
 
-  const tooltip = d3.select('body')
-    .append('div')
-    .attr('class', 'tooltip')
-    .style('position', 'absolute')
-    .style('background-color', 'white')
-    .style('padding', '10px')
-    .style('border', '1px solid #ccc')
-    .style('border-radius', '5px')
-    .style('pointer-events', 'none')
-    .style('opacity', 0);
-
   const arcs = svg.selectAll('path')
     .data(pie(data))
     .enter()
@@ -71,7 +76,7 @@ onMounted(() => {
       }
       
       tooltip
-        .style('opacity', .9)
+        .style('visibility', 'visible')
         .html(tooltipContent)
         .style('left', (event.pageX + 15) + 'px')
         .style('top', (event.pageY) + 'px');
@@ -83,7 +88,7 @@ onMounted(() => {
     })
     .on('mouseout', (event) => {
       tooltip
-        .style('opacity', 0);
+        .style('visibility', 'hidden');
 
       d3.select(event.currentTarget)
         .transition()
@@ -115,7 +120,7 @@ onMounted(() => {
       }
       
       tooltip
-        .style('opacity', .9)
+        .style('visibility', 'visible')
         .html(tooltipContent)
         .style('left', (event.pageX + 15) + 'px')
         .style('top', (event.pageY) + 'px');
@@ -128,7 +133,7 @@ onMounted(() => {
     })
     .on('mouseout', (event, d) => {
       tooltip
-        .style('opacity', 0);
+        .style('visibility', 'hidden');
 
       svg.selectAll('path')
         .transition()
@@ -136,6 +141,13 @@ onMounted(() => {
         .attr('transform', `scale(1)`);
     });
 
+});
+
+onUnmounted(() => {
+  if (tooltip) {
+    tooltip.remove();
+    tooltip = null;
+  }
 });
 </script>
 

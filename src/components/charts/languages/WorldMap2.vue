@@ -17,7 +17,7 @@ const createMap = async () => {
 
   const tooltip = d3.select('body').append('div')
     .attr('class', 'tooltip')
-    .style('opacity', 0)
+    .style('visibility', 'hidden')
     .style('position', 'absolute')
     .style('background-color', 'white')
     .style('border', '1px solid #ddd')
@@ -66,18 +66,14 @@ const createMap = async () => {
           .duration(200)
           .attr('fill', regionMap.has(countryCode) ? '#4a7c71' : '#b5b5b5');
         
-        tooltip.transition()
-          .duration(200)
-          .style('opacity', .9);
-        
-        const tooltipContent = regionInfo 
-          ? `${regionInfo.country_name}<br/>
-             Movies: ${regionInfo.amount_movies}<br/>
-             Language: ${regionInfo.country_language}`
-          : `${d.properties.name}<br/>
-             No movie data available`;
-        
-        tooltip.html(tooltipContent)
+        tooltip
+          .style('visibility', 'visible')
+          .html(regionInfo 
+            ? `${regionInfo.country_name}<br/>
+               Movies: ${regionInfo.amount_movies}<br/>
+               Language: ${regionInfo.country_language}`
+            : `${d.properties.name}<br/>
+               No movie data available`)
           .style('left', (event.pageX + 10) + 'px')
           .style('top', (event.pageY - 28) + 'px');
       })
@@ -89,9 +85,8 @@ const createMap = async () => {
           .duration(200)
           .attr('fill', regionMap.has(countryCode) ? '#69b3a2' : '#d3d3d3');
         
-        tooltip.transition()
-          .duration(500)
-          .style('opacity', 0);
+        tooltip
+          .style('visibility', 'hidden');
       })
       .on('mousemove', function(event) {
         tooltip

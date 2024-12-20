@@ -14,7 +14,7 @@ const createMap = async () => {
 
   const tooltip = d3.select('body').append('div')
     .attr('class', 'tooltip')
-    .style('opacity', 0)
+    .style('visibility', 'hidden')
     .style('position', 'absolute')
     .style('background-color', 'white')
     .style('border', '1px solid #ddd')
@@ -57,11 +57,9 @@ const createMap = async () => {
           .duration(200)
           .attr('fill', '#4a7c71');
         
-        tooltip.transition()
-          .duration(200)
-          .style('opacity', .9);
-        
-        tooltip.html(d.properties.name)
+        tooltip
+          .style('visibility', 'visible')
+          .html(d.properties.name)
           .style('left', (event.pageX + 10) + 'px')
           .style('top', (event.pageY - 28) + 'px');
       })
@@ -71,9 +69,8 @@ const createMap = async () => {
           .duration(200)
           .attr('fill', '#69b3a2');
         
-        tooltip.transition()
-          .duration(500)
-          .style('opacity', 0);
+        tooltip
+          .style('visibility', 'hidden');
       })
       .on('mousemove', function(event) {
         tooltip
@@ -81,7 +78,7 @@ const createMap = async () => {
           .style('top', (event.pageY - 28) + 'px');
       });
   } catch (error) {
-    console.error('Fehler beim Laden der Kartendaten:', error);
+    console.error('Error loading map data:', error);
   }
 };
 

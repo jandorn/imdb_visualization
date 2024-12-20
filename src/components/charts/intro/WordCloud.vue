@@ -1,14 +1,37 @@
 <script setup>
-import { onMounted, watch } from 'vue';
+import { onMounted, watch, onUnmounted } from 'vue';
 import * as d3 from 'd3';
 import cloud from 'd3-cloud';
 import { useCalcGenreAvgStore } from '../../../stores/calcGenreAvgStore';
 
 const genreAvgStore = useCalcGenreAvgStore();
 
+let tooltip;
+
 onMounted(() => {
+  if (!tooltip) {
+    tooltip = d3.select('body')
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('visibility', 'hidden')
+      .style('position', 'absolute')
+      .style('background-color', 'white')
+      .style('padding', '5px')
+      .style('border', '1px solid #ccc')
+      .style('border-radius', '5px')
+      .style('pointer-events', 'none')
+      .style('z-index', '9999');
+  }
+
   if (Object.keys(genreAvgStore.genreAverages).length > 0) {
     createWordCloud();
+  }
+});
+
+onUnmounted(() => {
+  if (tooltip) {
+    tooltip.remove();
+    tooltip = null;
   }
 });
 
@@ -66,17 +89,6 @@ function createWordCloud() {
       .append('g')
       .attr('transform', `translate(${layout.size()[0] / 2},${layout.size()[1] / 2})`);
 
-    const tooltip = d3.select('body')
-      .append('div')
-      .attr('class', 'tooltip')
-      .style('position', 'absolute')
-      .style('background-color', 'white')
-      .style('padding', '5px')
-      .style('border', '1px solid #ccc')
-      .style('border-radius', '5px')
-      .style('pointer-events', 'none')
-      .style('opacity', 0);
-
     svg.selectAll('text')
       .data(words)
       .enter().append('text')
@@ -86,17 +98,19 @@ function createWordCloud() {
       .attr('transform', d => `translate(${d.x},${d.y})rotate(${d.rotate})`)
       .text(d => d.text)
       .on('mouseover', (event, d) => {
-        tooltip.style('opacity', 1)
+        tooltip
+          .style('visibility', 'visible')
           .html(`Genre: ${d.text}<br>Amount: ${d.amount}`)
           .style('left', (event.pageX + 10) + 'px')
           .style('top', (event.pageY - 28) + 'px');
       })
       .on('mousemove', (event) => {
-        tooltip.style('left', (event.pageX + 10) + 'px')
+        tooltip
+          .style('left', (event.pageX + 10) + 'px')
           .style('top', (event.pageY - 28) + 'px');
       })
       .on('mouseout', () => {
-        tooltip.style('opacity', 0);
+        tooltip.style('visibility', 'hidden');
       });
   }
 }
