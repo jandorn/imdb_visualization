@@ -37,10 +37,10 @@ const movieStore = useMovieStore()
 const pages = {
   "Intro": [
     Intro1,
-    Intro2,
     Languages1,
     Languages2,
-    Languages3
+    Languages3,
+    Intro2
   ],
   "Genre": [
     Genre1,
