@@ -3,7 +3,6 @@ import { ref, onMounted, computed, watch } from 'vue';
 import Header from './components/Header.vue'
 import { useNavigationStore } from './stores/navigationStore'
 import { useMovieStore } from './stores/movieStore'
-import { useTop100MoviesStore } from './stores/top100MoviesStore'
 import * as d3 from 'd3';
 
 import Intro1 from './components/pages/intro/Intro1.vue'
@@ -34,10 +33,15 @@ import End3 from './components/pages/end/End3.vue'
 
 const navigationStore = useNavigationStore()
 const movieStore = useMovieStore()
-//const top100MoviesStore = useTop100MoviesStore()
 
 const pages = {
-  "Intro": [Intro1, Intro2, Languages1, Languages2, Languages3],
+  "Intro": [
+    Intro1,
+    Intro2,
+    Languages1,
+    Languages2,
+    Languages3
+  ],
   "Genre": [
     Genre1,
     Genre2,
