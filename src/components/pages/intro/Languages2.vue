@@ -6,7 +6,10 @@ import WorldMap2 from '@/components/charts/languages/WorldMap2.vue';
 <template>
   <PageLayout>
     <div class="w-full justify-start text-lg">
-      Luckily, most movies are available in other languages. Let's explore the share of movies available in different languages.<br>
+      Luckily, most movies are available in other languages.
+      Taking the 1000 most popular movies, we can analyze and visualize the share of these movies available in different languages.
+      For countries in gray, no movie data is available.
+      <br>
     </div>
     <div class="h-[600px]">
       <WorldMap2 />
