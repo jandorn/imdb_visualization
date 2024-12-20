@@ -406,6 +406,13 @@ watch(() => movieStore.movies, (newMovies) => {
 
 <template>
   <PageLayout>
+    <div class="w-full justify-start text-lg mb-4">
+      Each movie has one or multiple genres associated with it. With this visualization, we can see how these genres are <b>related</b> to each other.
+      The size of the circle represents the number of movies that have this genre.
+      The thickness and color of the line represents the similarity between two genres depending on the number of movies they have in common.
+      <br>
+      Hover over a genre to see how many movies have it or change to the matrix view.
+    </div>
     <div v-if="movieStore.isLoading">Loading...</div>
     <div v-else-if="movieStore.error">Error: {{ movieStore.error }}</div>
     <div v-else>
