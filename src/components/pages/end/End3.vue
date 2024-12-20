@@ -15,11 +15,11 @@ const movies = movieStore.movies
 <template>
   <PageLayout>
     <div class="w-full justify-start text-lg">
-      Here is the boxplot visualization of movie runtimes over the years.
+      Even though we have to keep in mind that there are very few movies in early years, let's have a look at the <b>evolution and variability of runtimes</b> over the years.<br>
+      As we can take from the box plots, movies indeed have been <b>getting a bit longer</b>. But the <b>variability of movie runtimes has decreased</b>, compared to the first quarter of the 20th century.<br><br><br>
     </div>
 
-    <div class="mt-8">
-      <h2>Boxplot of Movie Runtimes Over the Years</h2>
+    <div class="w-full justify-start">
       <Boxplot :movieData="movies" /> 
     </div>
   </PageLayout>

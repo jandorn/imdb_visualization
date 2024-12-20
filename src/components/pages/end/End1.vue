@@ -97,7 +97,7 @@ const toggleZoom = (event) => {
   <PageLayout>
     <div class="w-full justify-start text-lg">
       Have you also heard that <b>movies got longer in the recent past</b>? Let's visualize them in a spiral of equidistant points.<br>
-      <b>Zoom in</b> to dive into the first half of the 20th century. 
+      <b>Zoom in</b> to dive into the first half of the 20th century. Looks like there were quite some long movies, right?
     </div>
 
     <div class="mt-4 flex">
