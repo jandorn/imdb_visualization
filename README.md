@@ -4,7 +4,8 @@
 
 Codebase for a visualization of the IMDB dataset.
 
-You can find the webapp [here](https://imdbviz.com/).
+The webapp is deployed [here](https://imdbviz.com/).
+On the deployed site, the loading percentage is not working properly (it works fine locally though). Rest assured, the data is still being loaded and computed. It just takes a couple of seconds.
 
 ## Project Setup
 
@@ -18,10 +19,4 @@ npm install
 
 ```sh
 npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
 ```
