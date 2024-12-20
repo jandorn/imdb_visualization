@@ -8,7 +8,7 @@ const createMap = async () => {
   const width = 960;
   const height = 500;
 
-  const regionData = await d3.csv('/src/assets/data/RegionCounts.csv');
+  const regionData = await d3.csv(new URL('@/assets/data/RegionCounts.csv', import.meta.url).href);
   const regionMap = new Map(regionData.map(d => [d.country_iso, d]));
 
   const svg = d3.select(mapSvg.value)

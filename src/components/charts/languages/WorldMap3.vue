@@ -62,8 +62,8 @@ const createMap = async () => {
   const width = 960;
   const height = 500;
 
-  const regionData = await d3.csv('/src/assets/data/RegionCounts.csv');
-  const languageData = await d3.csv('/src/assets/data/LanguageCounts.csv');
+  const regionData = await d3.csv(new URL('@/assets/data/RegionCounts.csv', import.meta.url).href);
+  const languageData = await d3.csv(new URL('@/assets/data/LanguageCounts.csv', import.meta.url).href);
   
   const regionMap = new Map(regionData.map(d => [d.country_iso, d]));
   const languageMap = new Map(languageData.map(d => [d.country_language, +d.amount_movies]));
