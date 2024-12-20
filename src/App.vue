@@ -28,9 +28,13 @@ import Time7 from './components/pages/placeholder/Time7.vue';
 import Time8 from './components/pages/placeholder/Time8.vue';
 import Time9 from './components/pages/placeholder/Time9.vue';
 
+import End1 from './components/pages/end/End1.vue'
+import End2 from './components/pages/end/End2.vue'
+import End3 from './components/pages/end/End3.vue'
+
 const navigationStore = useNavigationStore()
 const movieStore = useMovieStore()
-const top100MoviesStore = useTop100MoviesStore()
+//const top100MoviesStore = useTop100MoviesStore()
 
 const pages = {
   "Intro": [Intro1, Intro2, Languages1, Languages2, Languages3],
@@ -52,6 +56,11 @@ const pages = {
     Time7,
     Time8,
     Time9
+  ],
+  "Runtime": [
+    End1,
+    End3,
+    End2
   ]
 };
 

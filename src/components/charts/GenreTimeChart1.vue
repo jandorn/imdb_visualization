@@ -312,6 +312,7 @@ function renderChart() {
   }
   
 }
+
 </script>
 
 <template>

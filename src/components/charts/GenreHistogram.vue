@@ -151,6 +151,7 @@ onMounted(() => {
   const yearData = processData();
   renderHistograms(yearData);
 });
+
 </script>
 
 <template>
